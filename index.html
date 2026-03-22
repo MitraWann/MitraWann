@@ -6,99 +6,349 @@
     <title>TulipNex | Layanan Bot WhatsApp Terbaik</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Base Blob Animation (Continuous) */
+        @keyframes morphBlob {
+            0% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+            34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+            67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+        }
+
+        /* The dynamic background elements */
+        .morph-bg {
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(99, 102, 241, 0.4) 100%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: morphBlob 15s ease-in-out infinite;
+            transition: all 0.3s ease-out;
+            will-change: transform, border-radius;
+            opacity: 0.7;
+        }
+
+        .morph-bg-2 {
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+            filter: blur(100px);
+            z-index: -1;
+            animation: morphBlob 20s ease-in-out infinite reverse;
+            transition: all 0.3s ease-out;
+            will-change: transform;
+        }
+
+        /* Glassmorphism utilities */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Card Hover Morphing */
+        .glass-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-radius: 2rem; /* Morphs from standard rounded to pill-like */
+            box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Scroll Reveal Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #7e22ce 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-slate-800 antialiased selection:bg-purple-200 selection:text-purple-900">
 
-    <nav class="bg-white shadow-sm fixed w-full z-10 top-0">
+    <!-- Morphing Background Elements -->
+    <div id="blob1" class="morph-bg"></div>
+    <div id="blob2" class="morph-bg-2"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold text-purple-600">TulipNex.</span>
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-2 group cursor-pointer">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-500 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">TulipNex<span class="text-purple-600">.</span></span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="#fitur" class="text-gray-600 hover:text-purple-600 font-medium">Fitur</a>
-                    <a href="#harga" class="text-gray-600 hover:text-purple-600 font-medium">Harga</a>
-                    <a href="#kontak" class="bg-purple-600 text-white px-4 py-2 rounded-md font-medium hover:bg-purple-700 transition">Hubungi Kami</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#fitur" class="text-sm font-medium text-slate-600 hover:text-purple-600 transition-colors">Fitur</a>
+                    <a href="#harga" class="text-sm font-medium text-slate-600 hover:text-purple-600 transition-colors">Harga</a>
+                    <a href="#kontak" class="relative overflow-hidden group bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:shadow-lg hover:shadow-slate-900/20">
+                        <span class="relative z-10">Mulai Sekarang</span>
+                        <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-purple-600 to-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left ease-out duration-300"></div>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <section class="pt-32 pb-20 px-4 bg-gradient-to-br from-purple-50 to-indigo-100">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-5xl font-extrabold text-gray-900 mb-6">Otomatiskan Bisnis Anda dengan <span class="text-purple-600">Bot WhatsApp</span></h1>
-            <p class="text-xl text-gray-600 mb-10">Tingkatkan layanan pelanggan dan penjualan Anda 24/7. Cepat, stabil, dan mudah dikustomisasi sesuai kebutuhan bisnis Anda.</p>
-            <a href="#kontak" class="bg-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-xl hover:bg-purple-700 transition">Coba Sekarang</a>
+    <!-- Hero Section -->
+    <section class="relative pt-40 pb-32 px-4 flex items-center min-h-[90vh]">
+        <div class="max-w-4xl mx-auto text-center relative z-10 reveal">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-white/80 shadow-sm mb-8 backdrop-blur-sm">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
+                </span>
+                <span class="text-xs font-semibold tracking-wide text-purple-800 uppercase">Sistem Bot Generasi Berikutnya</span>
+            </div>
+            
+            <h1 class="text-6xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tighter leading-tight">
+                Otomatiskan Bisnis Anda dengan <br/>
+                <span class="text-gradient">Kecerdasan Buatan.</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
+                Ubah cara Anda berinteraksi. Tingkatkan layanan pelanggan dan ledakkan penjualan 24/7. Cepat, stabil, dan dirancang khusus untuk skala bisnis Anda.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#kontak" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full text-lg font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:-translate-y-1 transition-all duration-300">
+                    Coba Gratis 7 Hari
+                </a>
+                <a href="#fitur" class="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 rounded-full text-lg font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 transition-all duration-300">
+                    Pelajari Fitur
+                </a>
+            </div>
         </div>
     </section>
 
-    <section id="fitur" class="py-20 bg-white px-4">
+    <!-- Fitur Section -->
+    <section id="fitur" class="py-24 px-4 relative z-10">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Mengapa Memilih TulipNex?</h2>
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Masa Depan Komunikasi</h2>
+                <p class="text-lg text-slate-600">Sistem cerdas yang bekerja saat Anda tertidur.</p>
+            </div>
+            
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-6 bg-gray-50 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-2xl mb-4">⚡</div>
-                    <h3 class="text-xl font-bold mb-2">Auto-Reply Cepat</h3>
-                    <p class="text-gray-600">Balas pesan pelanggan dalam hitungan detik. Atur kata kunci spesifik untuk respons yang akurat.</p>
+                <!-- Card 1 -->
+                <div class="glass-card p-8 rounded-3xl reveal" style="transition-delay: 100ms;">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-100 to-white flex items-center justify-center border border-purple-100 shadow-sm mb-6">
+                        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Auto-Reply Instan</h3>
+                    <p class="text-slate-600 leading-relaxed">Balas pelanggan dalam sepersekian detik. Atur alur percakapan kompleks dengan sistem NLP yang memahami konteks pengguna.</p>
                 </div>
-                <div class="p-6 bg-gray-50 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-2xl mb-4">📢</div>
-                    <h3 class="text-xl font-bold mb-2">Broadcast Pesan</h3>
-                    <p class="text-gray-600">Kirim promosi atau pengumuman ke ratusan kontak sekaligus tanpa khawatir diblokir.</p>
+
+                <!-- Card 2 -->
+                <div class="glass-card p-8 rounded-3xl reveal" style="transition-delay: 200ms;">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-100 to-white flex items-center justify-center border border-blue-100 shadow-sm mb-6">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Broadcast Anti-Blokir</h3>
+                    <p class="text-slate-600 leading-relaxed">Kirim kampanye promosi ke ribuan prospek menggunakan algoritma rotasi pesan pintar yang menjaga reputasi nomor Anda.</p>
                 </div>
-                <div class="p-6 bg-gray-50 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-2xl mb-4">🔌</div>
-                    <h3 class="text-xl font-bold mb-2">Integrasi API</h3>
-                    <p class="text-gray-600">Hubungkan bot dengan sistem kasir, toko online, atau database Anda dengan mudah.</p>
+
+                <!-- Card 3 -->
+                <div class="glass-card p-8 rounded-3xl reveal" style="transition-delay: 300ms;">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-100 to-white flex items-center justify-center border border-indigo-100 shadow-sm mb-6">
+                        <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Integrasi API Seamless</h3>
+                    <p class="text-slate-600 leading-relaxed">Hubungkan langsung ke sistem POS, Shopify, WooCommerce, atau database kustom Anda tanpa hambatan teknis.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="harga" class="py-20 bg-gray-50 px-4">
+    <!-- Harga Section -->
+    <section id="harga" class="py-24 px-4 relative z-10">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Paket Layanan Kami</h2>
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Investasi Fleksibel</h2>
+                <p class="text-lg text-slate-600">Skalakan sesuai pertumbuhan bisnis Anda.</p>
+            </div>
+            
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center">
-                    <h3 class="text-2xl font-bold mb-2">Basic Bot</h3>
-                    <div class="text-4xl font-extrabold text-purple-600 mb-6">Rp 50k<span class="text-lg text-gray-500 font-normal">/bulan</span></div>
-                    <ul class="text-gray-600 space-y-3 mb-8 text-left">
-                        <li>✔️ Auto Reply Basic</li>
-                        <li>✔️ Maksimal 50 Keyword</li>
-                        <li>✔️ Uptime 99.9%</li>
-                        <li>❌ Broadcast Terjadwal</li>
+                <!-- Basic Plan -->
+                <div class="glass-card p-10 rounded-[2.5rem] flex flex-col reveal">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-slate-500 mb-2">Starter</h3>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-extrabold text-slate-900 tracking-tighter">Rp 50k</span>
+                            <span class="text-slate-500 font-medium">/bulan</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-8 pb-8 border-b border-slate-200/50">Sempurna untuk UMKM yang baru memulai otomatisasi.</p>
+                    <ul class="space-y-4 mb-10 flex-grow">
+                        <li class="flex items-center text-slate-700">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Auto Reply Dasar
+                        </li>
+                        <li class="flex items-center text-slate-700">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Maksimal 50 Keyword
+                        </li>
+                        <li class="flex items-center text-slate-700">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Uptime 99.9%
+                        </li>
                     </ul>
-                    <a href="#kontak" class="block w-full bg-gray-100 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-200 transition">Pilih Basic</a>
+                    <a href="#kontak" class="block w-full text-center bg-white text-slate-800 font-semibold py-4 rounded-2xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300">Pilih Starter</a>
                 </div>
-                <div class="bg-purple-600 p-8 rounded-2xl shadow-xl text-center text-white relative transform md:-translate-y-4">
-                    <div class="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Terpopuler</div>
-                    <h3 class="text-2xl font-bold mb-2">Pro Bot</h3>
-                    <div class="text-4xl font-extrabold mb-6">Rp 150k<span class="text-lg text-purple-200 font-normal">/bulan</span></div>
-                    <ul class="text-purple-100 space-y-3 mb-8 text-left">
-                        <li>✔️ Unlimited Auto Reply & Keyword</li>
-                        <li>✔️ Fitur Broadcast & Jadwal</li>
-                        <li>✔️ Integrasi ChatGPT / AI</li>
-                        <li>✔️ Prioritas Dukungan 24/7</li>
+
+                <!-- Pro Plan -->
+                <div class="relative bg-slate-900 p-10 rounded-[2.5rem] flex flex-col shadow-2xl shadow-purple-900/20 md:-translate-y-4 reveal" style="transition-delay: 200ms;">
+                    <div class="absolute -top-4 inset-x-0 flex justify-center">
+                        <span class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-lg">Pilihan Enterprise</span>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-[2.5rem] pointer-events-none"></div>
+                    
+                    <div class="mb-6 relative z-10">
+                        <h3 class="text-xl font-semibold text-purple-300 mb-2">Pro Business</h3>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-extrabold text-white tracking-tighter">Rp 150k</span>
+                            <span class="text-slate-400 font-medium">/bulan</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 mb-8 pb-8 border-b border-slate-700/50 relative z-10">Fitur penuh untuk bisnis dengan trafik tinggi.</p>
+                    <ul class="space-y-4 mb-10 flex-grow relative z-10">
+                        <li class="flex items-center text-slate-200">
+                            <svg class="w-5 h-5 text-purple-400 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Unlimited Auto Reply & Keyword
+                        </li>
+                        <li class="flex items-center text-slate-200">
+                            <svg class="w-5 h-5 text-purple-400 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Broadcast & Penjadwalan Cerdas
+                        </li>
+                        <li class="flex items-center text-slate-200">
+                            <svg class="w-5 h-5 text-purple-400 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Integrasi ChatGPT / AI Engine
+                        </li>
+                        <li class="flex items-center text-slate-200">
+                            <svg class="w-5 h-5 text-purple-400 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Prioritas Dukungan Teknis 24/7
+                        </li>
                     </ul>
-                    <a href="#kontak" class="block w-full bg-white text-purple-600 font-bold py-3 rounded-lg hover:bg-gray-50 transition">Pilih Pro</a>
+                    <a href="#kontak" class="relative block w-full text-center bg-white text-slate-900 font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 z-10 overflow-hidden group">
+                        <span class="relative z-10">Pilih Pro</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-100 to-indigo-100 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer id="kontak" class="bg-gray-900 text-white py-12 px-4 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-2xl font-bold mb-6">Siap Menggunakan TulipNex?</h2>
-            <p class="mb-8 text-gray-400">Hubungi kami sekarang untuk konsultasi gratis mengenai kebutuhan bot Anda.</p>
-            <a href="https://wa.me/628989240628" target="_blank" class="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-full font-bold hover:bg-green-600 transition">
-                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                Chat via WhatsApp
+    <!-- Footer / CTA -->
+    <footer id="kontak" class="relative bg-slate-900 pt-24 pb-12 overflow-hidden mt-20">
+        <!-- Footer background decoration -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10 reveal">
+            <h2 class="text-4xl font-extrabold text-white mb-6 tracking-tight">Siap Memaksimalkan Potensi Anda?</h2>
+            <p class="mb-10 text-xl text-slate-400 font-light">Konsultasikan struktur otomatisasi bot Anda bersama pakar kami secara gratis. Tanpa komitmen.</p>
+            
+            <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center justify-center bg-[#25D366] text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(37,211,102,0.3)] hover:shadow-[0_0_40px_rgba(37,211,102,0.5)] transform hover:-translate-y-1 transition-all duration-300">
+                <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Diskusikan Proyek via WhatsApp
             </a>
-            <p class="mt-12 text-sm text-gray-600">© 2026 TulipNex. All rights reserved.</p>
+            
+            <div class="mt-20 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+                <p>© 2026 TulipNex. Hak cipta dilindungi.</p>
+                <div class="mt-4 md:mt-0 flex gap-6">
+                    <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+                    <a href="#" class="hover:text-white transition-colors">Syarat Ketentuan</a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Script for Scroll Logic (Morph & Reveal) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Scroll-linked Morphing Logic
+            const blob1 = document.getElementById('blob1');
+            const blob2 = document.getElementById('blob2');
+            const navbar = document.getElementById('navbar');
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const maxScroll = document.body.scrollHeight - window.innerHeight;
+                const scrollPercent = scrollY / maxScroll;
+
+                // Move and alter the blobs based on scroll depth
+                if (blob1 && blob2) {
+                    blob1.style.transform = `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px) rotate(${scrollY * 0.05}deg) scale(${1 + scrollPercent * 0.2})`;
+                    blob2.style.transform = `translate(-${scrollY * 0.05}px, -${scrollY * 0.3}px) rotate(-${scrollY * 0.05}deg) scale(${1 - scrollPercent * 0.1})`;
+                }
+
+                // Add slight shadow to navbar when scrolling down
+                if (scrollY > 50) {
+                    navbar.classList.add('shadow-md', 'bg-white/80');
+                    navbar.classList.remove('bg-white/70');
+                } else {
+                    navbar.classList.remove('shadow-md', 'bg-white/80');
+                    navbar.classList.add('bg-white/70');
+                }
+            });
+
+            // 2. Intersection Observer for Reveal Animations
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Hanya animasi sekali saat muncul
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+        });
+    </script>
 </body>
 </html>
