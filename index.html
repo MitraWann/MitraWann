@@ -1,358 +1,176 @@
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInAnonymously, 
-  signInWithCustomToken, 
-  onAuthStateChanged 
-} from 'firebase/auth';
-import { 
-  getFirestore, 
-  collection, 
-  onSnapshot, 
-  doc, 
-  setDoc, 
-  deleteDoc 
-} from 'firebase/firestore';
-import { 
-  Briefcase, 
-  Calendar, 
-  MapPin, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  X, 
-  Save, 
-  ShieldAlert,
-  ExternalLink,
-  ChevronRight,
-  Terminal
-} from 'lucide-react';
-
-// --- Firebase Initialization ---
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-cv-app';
-
-export default function PremiumCV() {
-  const [user, setUser] = useState(null);
-  const [experiences, setExperiences] = useState([]);
-  const [isAdminMode, setIsAdminMode] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Form State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    company: '',
-    period: '',
-    location: '',
-    description: '',
-    imageUrl: '',
-    order: 0
-  });
-
-  // --- Auth & Data Fetching ---
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (error) {
-        console.error("Auth error:", error);
-      }
-    };
-    initAuth();
-
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    // Rule 1: Strict Paths -> Using public data so anyone viewing the link sees the CV
-    const experiencesRef = collection(db, 'artifacts', appId, 'public', 'data', 'experiences');
-    
-    // Rule 2: No Complex Queries -> Fetch all, sort in memory
-    const unsubscribe = onSnapshot(experiencesRef, 
-      (snapshot) => {
-        const expData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        // Sort in memory (descending order)
-        expData.sort((a, b) => b.order - a.order);
-        setExperiences(expData);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Firestore error:", error);
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [user]);
-
-  // --- Handlers ---
-  const handleOpenModal = (exp = null) => {
-    if (exp) {
-      setEditingId(exp.id);
-      setFormData(exp);
-    } else {
-      setEditingId(null);
-      setFormData({
-        title: '', company: '', period: '', location: '', description: '', imageUrl: '', order: experiences.length + 1
-      });
-    }
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingId(null);
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    if (!user) return;
-
-    const idToSave = editingId || crypto.randomUUID();
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'experiences', idToSave);
-    
-    try {
-      await setDoc(docRef, { ...formData, id: idToSave });
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error saving document: ", error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!user) return;
-    // Note: Replaced window.confirm with a direct action for iframe compatibility.
-    // In a real prod environment, build a custom confirmation modal.
-    try {
-      await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'experiences', id));
-    } catch (error) {
-      console.error("Error deleting document: ", error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center text-neutral-400">
-        <div className="flex flex-col items-center gap-4">
-          <Terminal className="w-8 h-8 animate-pulse text-indigo-500" />
-          <p className="tracking-widest text-sm uppercase">Loading Instance...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 font-sans selection:bg-indigo-500/30">
-      
-      {/* Top Navigation / Admin Toggle */}
-      <nav className="fixed top-0 w-full border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-md z-40">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-bold text-lg tracking-tight text-white flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
-            Mitrawan.
-          </div>
-          <button 
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
-              isAdminMode 
-                ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400' 
-                : 'border-neutral-800 text-neutral-500 hover:text-white hover:border-neutral-600'
-            }`}
-          >
-            {isAdminMode ? 'Exit Edit Mode' : 'Admin Login'}
-          </button>
-        </div>
-      </nav>
-
-      <main className="max-w-4xl mx-auto px-6 pt-32 pb-24">
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitrawan | Software Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        {/* Hero Section */}
-        <header className="mb-24">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-tight">
-            Software Engineer <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-              Building Impact.
-            </span>
-          </h1>
-          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl leading-relaxed font-light">
-            I architect scalable solutions and design systems that don't just look good, but solve actual business problems. Brutally honest, highly strategic.
-          </p>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a; /* neutral-950 */
+            color: #e5e5e5; /* neutral-200 */
+        }
+
+        .glass-panel {
+            background: rgba(23, 23, 23, 0.5); /* neutral-900 */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(38, 38, 38, 0.8); /* neutral-800 */
+        }
+
+        .timeline-dot {
+            box-shadow: 0 0 0 4px #0a0a0a;
+        }
+
+        /* Subtle glow effect for text */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body class="selection:bg-indigo-500/30 selection:text-indigo-200 antialiased">
+
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full glass-panel z-40 border-b-0 border-neutral-800/50">
+        <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="font-bold text-lg tracking-tight text-white flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                Mitrawan.
+            </div>
+            <a href="mailto:emailkamu@domain.com" class="text-xs px-4 py-2 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all hover:bg-neutral-800/50">
+                Contact Me
+            </a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 pt-32 pb-24">
+        
+        <!-- Hero Section -->
+        <header class="mb-24">
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-tight">
+                Software Engineer <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 text-glow">
+                    Building Impact.
+                </span>
+            </h1>
+            <p class="text-lg md:text-xl text-neutral-400 max-w-2xl leading-relaxed font-light">
+                I architect scalable solutions and design systems that don't just look good, but solve actual business problems. Brutally honest, highly strategic.
+            </p>
         </header>
 
-        {/* Experience Section */}
+        <!-- Experience Section -->
         <section>
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-              <Briefcase className="w-6 h-6 text-neutral-500" />
-              Experience Record
-            </h2>
-            {isAdminMode && (
-              <button 
-                onClick={() => handleOpenModal()}
-                className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-lg text-sm font-semibold hover:bg-neutral-200 transition-colors"
-              >
-                <Plus className="w-4 h-4" /> Add Record
-              </button>
-            )}
-          </div>
-
-          {experiences.length === 0 ? (
-            <div className="text-center py-20 border border-neutral-800 border-dashed rounded-2xl text-neutral-500">
-              <p>No records found in database.</p>
-              {isAdminMode && <p className="text-sm mt-2">Click 'Add Record' to start building your timeline.</p>}
+            <div class="flex items-center gap-3 mb-12">
+                <!-- Briefcase Icon -->
+                <svg class="w-6 h-6 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <h2 class="text-2xl font-bold tracking-tight text-white">Experience Record</h2>
             </div>
-          ) : (
-            <div className="relative border-l border-neutral-800 ml-3 space-y-16">
-              {experiences.map((exp) => (
-                <div key={exp.id} className="relative pl-8 md:pl-12 group">
-                  {/* Timeline Dot */}
-                  <div className="absolute -left-[5px] top-2 w-[10px] h-[10px] rounded-full bg-neutral-800 group-hover:bg-indigo-500 transition-colors duration-300 ring-4 ring-neutral-950"></div>
-                  
-                  {/* Content Card */}
-                  <div className="grid md:grid-cols-[1fr_250px] gap-8 items-start">
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-1">{exp.title}</h3>
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-400 mb-6">
-                        <span className="flex items-center gap-1 font-medium text-indigo-400">
-                          {exp.company}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" /> {exp.period}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" /> {exp.location}
-                        </span>
-                      </div>
-                      <p className="text-neutral-300 leading-relaxed font-light whitespace-pre-wrap">
-                        {exp.description}
-                      </p>
 
-                      {/* Admin Controls */}
-                      {isAdminMode && (
-                        <div className="mt-6 flex gap-3">
-                          <button 
-                            onClick={() => handleOpenModal(exp)}
-                            className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors bg-neutral-900 px-3 py-1.5 rounded-md border border-neutral-800"
-                          >
-                            <Edit2 className="w-4 h-4" /> Edit
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(exp.id)}
-                            className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors bg-red-950/30 px-3 py-1.5 rounded-md border border-red-900/50"
-                          >
-                            <Trash2 className="w-4 h-4" /> Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Optional Image / Proof of Work */}
-                    {exp.imageUrl && (
-                      <div className="block overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 group-hover:border-neutral-700 transition-colors relative">
-                        <img 
-                          src={exp.imageUrl} 
-                          alt={`Proof for ${exp.title}`}
-                          className="w-full h-auto object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div className="hidden absolute inset-0 items-center justify-center p-4 text-center text-xs text-neutral-500 bg-neutral-900">
-                          Image failed to load.<br/>Check URL.
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <!-- Kontainer dimana JavaScript akan menyuntikkan data pengalaman -->
+            <div id="experience-container" class="relative border-l border-neutral-800 ml-3 space-y-16">
+                <!-- Data akan dimuat di sini oleh JavaScript -->
             </div>
-          )}
         </section>
-      </main>
+    </main>
 
-      {/* Editor Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-neutral-800 sticky top-0 bg-neutral-900/95 backdrop-blur z-10">
-              <h3 className="text-xl font-bold text-white">
-                {editingId ? 'Edit Record' : 'New Record'}
-              </h3>
-              <button onClick={handleCloseModal} className="text-neutral-400 hover:text-white p-1">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+    <!-- ========================================== -->
+    <!-- 🔥 MITRAAA: EDIT DATA KAMU DI BAWAH INI 🔥 -->
+    <!-- ========================================== -->
+    <script>
+        // Ini adalah "Database" kamu sekarang. Mudah, cepat, dan aman.
+        // Jika ada pengalaman baru, cukup tambahkan block { ... } baru di dalam array ini.
+        const DATA_PENGALAMAN = [
+            {
+                id: 1,
+                posisi: "Senior Backend Engineer",
+                perusahaan: "TechCorp Indonesia",
+                periode: "Jan 2024 - Sekarang",
+                lokasi: "Jakarta, Indonesia",
+                deskripsi: "- Mengarsiteki ulang sistem microservices yang meningkatkan waktu respons API sebesar 40%.\n- Memimpin tim beranggotakan 5 engineer untuk peluncuran fitur payment gateway baru dalam waktu 2 bulan.\n- Mengurangi biaya server AWS sebesar $2000/bulan dengan optimasi query database.",
+                fotoBukti: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop" // Ganti dengan link fotomu atau kosongkan ""
+            },
+            {
+                id: 2,
+                posisi: "Fullstack Web Developer",
+                perusahaan: "Startup Digital Nusantara",
+                periode: "Mar 2022 - Des 2023",
+                lokasi: "Makassar, Sulawesi Selatan",
+                deskripsi: "- Mengembangkan dashboard admin CMS internal menggunakan React dan Node.js yang digunakan oleh 50+ karyawan setiap hari.\n- Mengimplementasikan sistem autentikasi JWT dan Role-Based Access Control (RBAC).\n- Berhasil menangani lonjakan traffic hingga 10.000 concurrent users saat flash sale.",
+                fotoBukti: "" // Dikosongkan jika tidak ada foto
+            },
+            {
+                id: 3,
+                posisi: "Junior Frontend Developer",
+                perusahaan: "Creative Agency",
+                periode: "Jul 2021 - Feb 2022",
+                lokasi: "Remote",
+                deskripsi: "- Membangun 10+ landing page interaktif dengan konversi tinggi menggunakan HTML, CSS, dan vanilla JavaScript.\n- Bekerja sama dengan tim UI/UX untuk memastikan desain pixel-perfect.",
+                fotoBukti: "" 
+            }
+        ];
 
-            <form onSubmit={handleSave} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Job Title</label>
-                  <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. Senior Backend Engineer" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Company</label>
-                  <input required type="text" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. TechCorp Inc." />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Period</label>
-                  <input required type="text" value={formData.period} onChange={e => setFormData({...formData, period: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. 2021 - Present" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Location</label>
-                  <input required type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. Remote / Jakarta" />
-                </div>
-              </div>
+        // --- SISTEM RENDER OTOMATIS (Jangan ubah kode di bawah ini kecuali kamu paham) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('experience-container');
+            
+            if (DATA_PENGALAMAN.length === 0) {
+                container.innerHTML = `<div class="text-neutral-500 pl-8">Belum ada data pengalaman yang ditambahkan.</div>`;
+                return;
+            }
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Description / Impact (Focus on metrics)</label>
-                <textarea required rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="- Increased API performance by 40%...&#10;- Led a team of 5 engineers..." />
-              </div>
+            let htmlContent = '';
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-2">
-                    Image URL <span className="text-neutral-600 normal-case">(Optional proof of work)</span>
-                  </label>
-                  <input type="url" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors text-sm" placeholder="https://imgur.com/your-image.png" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Sort Order (Highest appears first)</label>
-                  <input type="number" value={formData.order} onChange={e => setFormData({...formData, order: parseInt(e.target.value) || 0})} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors" />
-                </div>
-              </div>
+            DATA_PENGALAMAN.forEach((item) => {
+                // Memformat teks agar line break (\n) menjadi <br>
+                const formattedDesc = item.deskripsi.replace(/\n/g, '<br/>');
 
-              <div className="pt-6 border-t border-neutral-800 flex justify-end gap-4">
-                <button type="button" onClick={handleCloseModal} className="px-6 py-3 rounded-lg text-sm font-semibold text-neutral-400 hover:text-white transition-colors">
-                  Cancel
-                </button>
-                <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg text-sm font-bold hover:bg-neutral-200 transition-colors">
-                  <Save className="w-4 h-4" /> Save Record
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                // Template Foto jika URL tersedia
+                const photoTemplate = item.fotoBukti ? `
+                    <div class="block overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 group-hover:border-neutral-700 transition-colors mt-2">
+                        <img src="${item.fotoBukti}" alt="Ilustrasi ${item.posisi}" class="w-full h-auto object-cover opacity-70 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500" loading="lazy" />
+                    </div>
+                ` : '';
 
-    </div>
-  );
-}
+                htmlContent += `
+                    <div class="relative pl-8 md:pl-12 group">
+                        <!-- Timeline Dot -->
+                        <div class="absolute -left-[5px] top-2 w-[10px] h-[10px] rounded-full bg-neutral-800 group-hover:bg-indigo-500 transition-colors duration-300 timeline-dot"></div>
+                        
+                        <!-- Content Card -->
+                        <div class="grid md:grid-cols-[1fr_250px] gap-8 items-start">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors">${item.posisi}</h3>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-neutral-400 mb-6">
+                                    <span class="font-medium text-neutral-300">${item.perusahaan}</span>
+                                    
+                                    <span class="flex items-center gap-1">
+                                        <!-- Calendar Icon -->
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        ${item.periode}
+                                    </span>
+                                    
+                                    <span class="flex items-center gap-1">
+                                        <!-- Map Pin Icon -->
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        ${item.lokasi}
+                                    </span>
+                                </div>
+                                <p class="text-neutral-400 leading-relaxed font-light text-sm md:text-base">
+                                    ${formattedDesc}
+                                </p>
+                            </div>
+
+                            ${photoTemplate}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        });
+    </script>
+</body>
+</html>
