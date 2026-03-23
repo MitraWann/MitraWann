@@ -1,176 +1,891 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitrawan | Software Engineer</title>
+    <title>Blog Pribadi | Mitrawan</title>
+    <!-- Menggunakan Tailwind CSS dari CDN untuk styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Konfigurasi warna kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb', // Warna biru utama
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Menggunakan Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Menggunakan FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a; /* neutral-950 */
-            color: #e5e5e5; /* neutral-200 */
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
         }
-
-        .glass-panel {
-            background: rgba(23, 23, 23, 0.5); /* neutral-900 */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(38, 38, 38, 0.8); /* neutral-800 */
-        }
-
-        .timeline-dot {
-            box-shadow: 0 0 0 4px #0a0a0a;
-        }
-
-        /* Subtle glow effect for text */
-        .text-glow {
-            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-        }
+        /* Animasi untuk modal */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.3s ease-out; }
     </style>
 </head>
-<body class="selection:bg-indigo-500/30 selection:text-indigo-200 antialiased">
+<body class="bg-light text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- Top Navigation -->
-    <nav class="fixed top-0 w-full glass-panel z-40 border-b-0 border-neutral-800/50">
-        <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="font-bold text-lg tracking-tight text-white flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
-                Mitrawan.
+    <!-- Navigasi (Navbar) -->
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="text-2xl font-bold text-primary tracking-tight">Mitra<span class="text-dark">Wann.</span></a>
+                </div>
+                <!-- Menu Desktop -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="text-gray-600 hover:text-primary transition font-medium">Beranda</a>
+                    <a href="#tentang" class="text-gray-600 hover:text-primary transition font-medium">Tentang</a>
+                    <a href="#artikel" class="text-gray-600 hover:text-primary transition font-medium">Artikel</a>
+                    <a href="#kontak" class="bg-primary text-white px-5 py-2 rounded-full hover:bg-blue-700 transition font-medium shadow-md shadow-blue-200">Kontak Saya</a>
+                    <button id="nav-admin" class="hidden text-dark hover:text-primary transition font-bold border border-gray-300 px-4 py-2 rounded-full">Admin</button>
+                    <button id="nav-logout" class="hidden text-red-500 hover:text-red-700 transition font-bold px-4 py-2">Logout</button>
+                </div>
+                <!-- Tombol Menu Mobile -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-dark focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
             </div>
-            <a href="mailto:emailkamu@domain.com" class="text-xs px-4 py-2 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all hover:bg-neutral-800/50">
-                Contact Me
-            </a>
+        </div>
+        <!-- Menu Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#beranda" class="block px-3 py-2 text-gray-600 font-medium hover:bg-gray-50 rounded-md">Beranda</a>
+                <a href="#tentang" class="block px-3 py-2 text-gray-600 font-medium hover:bg-gray-50 rounded-md">Tentang</a>
+                <a href="#artikel" class="block px-3 py-2 text-gray-600 font-medium hover:bg-gray-50 rounded-md">Artikel</a>
+                <a href="#kontak" class="block px-3 py-2 text-primary font-medium hover:bg-gray-50 rounded-md">Kontak Saya</a>
+                <button id="mobile-nav-admin" class="hidden w-full text-left block px-3 py-2 text-dark font-bold hover:bg-gray-50 rounded-md">Admin Dashboard</button>
+                <button id="mobile-nav-logout" class="hidden w-full text-left block px-3 py-2 text-red-500 font-bold hover:bg-gray-50 rounded-md">Logout</button>
+            </div>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 pt-32 pb-24">
-        
-        <!-- Hero Section -->
-        <header class="mb-24">
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-tight">
-                Software Engineer <br/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 text-glow">
-                    Building Impact.
-                </span>
-            </h1>
-            <p class="text-lg md:text-xl text-neutral-400 max-w-2xl leading-relaxed font-light">
-                I architect scalable solutions and design systems that don't just look good, but solve actual business problems. Brutally honest, highly strategic.
+    <!-- Bagian Utama (Hero Section) -->
+    <section id="beranda" class="flex-grow pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+                <div class="w-full lg:w-1/2 text-center lg:text-left">
+                    <span id="display-hero-subtitle" class="text-primary font-semibold tracking-wide uppercase text-sm">Selamat Datang di Blog Saya</span>
+                    <h1 id="display-hero-title" class="mt-3 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-dark leading-tight">
+                        Halo, Saya <span class="text-primary">Mitrawan</span>
+                    </h1>
+                    <p id="display-hero-desc" class="mt-5 text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Seorang penulis lepas, pengembang web, dan pembelajar seumur hidup. Di sini saya membagikan pemikiran, tutorial, dan pengalaman saya dalam dunia teknologi dan kehidupan sehari-hari.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#artikel" class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                            Baca Artikel
+                        </a>
+                        <a href="#kontak" class="bg-white text-gray-700 border border-gray-300 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition">
+                            Hubungi Saya
+                        </a>
+                    </div>
+                </div>
+                <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
+                    <!-- Foto Profil -->
+                    <div class="relative w-64 h-64 sm:w-80 sm:h-80">
+                        <div class="absolute inset-0 bg-primary rounded-full opacity-10 blur-2xl transform scale-110"></div>
+                        <img src="https://files.catbox.moe/3t0jyz.jpg" alt="Foto Profil" class="relative rounded-full object-cover w-full h-full shadow-2xl border-4 border-white" onerror="this.src='https://ui-avatars.com/api/?name=Mitrawan&size=512&background=2563eb&color=fff'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Tentang -->
+    <section id="tentang" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-dark">Tentang Saya</h2>
+            <div class="w-16 h-1 bg-primary mx-auto mt-4 rounded"></div>
+            <p id="display-about-desc" class="mt-6 text-gray-600 leading-relaxed text-lg">
+                Saya mulai menulis kode sejak tahun 2018 dan jatuh cinta pada pengembangan web. Melalui blog ini, saya berharap dapat mendokumentasikan perjalanan karir saya, berbagi solusi teknis yang saya temukan, dan sesekali menulis tentang buku atau produktivitas. Ketika tidak sedang di depan komputer, saya biasanya bersepeda atau menikmati kopi di kedai lokal.
             </p>
-        </header>
+        </div>
+    </section>
 
-        <!-- Experience Section -->
-        <section>
-            <div class="flex items-center gap-3 mb-12">
-                <!-- Briefcase Icon -->
-                <svg class="w-6 h-6 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <h2 class="text-2xl font-bold tracking-tight text-white">Experience Record</h2>
+    <!-- Bagian Artikel Terbaru -->
+    <section id="artikel" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold text-dark">Artikel Terbaru</h2>
+                    <div class="w-16 h-1 bg-primary mt-4 rounded"></div>
+                </div>
             </div>
-
-            <!-- Kontainer dimana JavaScript akan menyuntikkan data pengalaman -->
-            <div id="experience-container" class="relative border-l border-neutral-800 ml-3 space-y-16">
-                <!-- Data akan dimuat di sini oleh JavaScript -->
-            </div>
-        </section>
-    </main>
-
-    <!-- ========================================== -->
-    <!-- 🔥 MITRAAA: EDIT DATA KAMU DI BAWAH INI 🔥 -->
-    <!-- ========================================== -->
-    <script>
-        // Ini adalah "Database" kamu sekarang. Mudah, cepat, dan aman.
-        // Jika ada pengalaman baru, cukup tambahkan block { ... } baru di dalam array ini.
-        const DATA_PENGALAMAN = [
-            {
-                id: 1,
-                posisi: "Senior Backend Engineer",
-                perusahaan: "TechCorp Indonesia",
-                periode: "Jan 2024 - Sekarang",
-                lokasi: "Jakarta, Indonesia",
-                deskripsi: "- Mengarsiteki ulang sistem microservices yang meningkatkan waktu respons API sebesar 40%.\n- Memimpin tim beranggotakan 5 engineer untuk peluncuran fitur payment gateway baru dalam waktu 2 bulan.\n- Mengurangi biaya server AWS sebesar $2000/bulan dengan optimasi query database.",
-                fotoBukti: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop" // Ganti dengan link fotomu atau kosongkan ""
-            },
-            {
-                id: 2,
-                posisi: "Fullstack Web Developer",
-                perusahaan: "Startup Digital Nusantara",
-                periode: "Mar 2022 - Des 2023",
-                lokasi: "Makassar, Sulawesi Selatan",
-                deskripsi: "- Mengembangkan dashboard admin CMS internal menggunakan React dan Node.js yang digunakan oleh 50+ karyawan setiap hari.\n- Mengimplementasikan sistem autentikasi JWT dan Role-Based Access Control (RBAC).\n- Berhasil menangani lonjakan traffic hingga 10.000 concurrent users saat flash sale.",
-                fotoBukti: "" // Dikosongkan jika tidak ada foto
-            },
-            {
-                id: 3,
-                posisi: "Junior Frontend Developer",
-                perusahaan: "Creative Agency",
-                periode: "Jul 2021 - Feb 2022",
-                lokasi: "Remote",
-                deskripsi: "- Membangun 10+ landing page interaktif dengan konversi tinggi menggunakan HTML, CSS, dan vanilla JavaScript.\n- Bekerja sama dengan tim UI/UX untuk memastikan desain pixel-perfect.",
-                fotoBukti: "" 
-            }
-        ];
-
-        // --- SISTEM RENDER OTOMATIS (Jangan ubah kode di bawah ini kecuali kamu paham) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('experience-container');
             
-            if (DATA_PENGALAMAN.length === 0) {
-                container.innerHTML = `<div class="text-neutral-500 pl-8">Belum ada data pengalaman yang ditambahkan.</div>`;
+            <!-- Tempat daftar artikel akan di-*render* oleh JavaScript -->
+            <div id="article-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Artikel dimuat melalui JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Kontak -->
+    <section id="kontak" class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-dark">Mari Berkolaborasi</h2>
+            <div class="w-16 h-1 bg-primary mx-auto mt-4 mb-8 rounded"></div>
+            <p class="text-gray-600 mb-8 text-lg">
+                Punya ide proyek, tawaran pekerjaan, atau sekadar ingin menyapa? Kotak masuk saya selalu terbuka.
+            </p>
+
+            <a href="mailto:wmitrawan@gmail.com" target="_blank" class="inline-flex items-center gap-2 bg-dark text-white px-8 py-4 rounded-full font-medium hover:bg-gray-800 transition shadow-lg">
+                <i class="fas fa-envelope"></i> Kirim Email ke Saya
+            </a>
+            
+            <div class="mt-12 flex justify-center gap-6">
+                <a href="https://wa.me/6282215415550" target="_blank" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition text-xl">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://www.instagram.com/mitrawann?igsh=MW5iMjRsdmJmY29pMg%3D%3D" target="_blank" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition text-xl">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition text-xl">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark py-8 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-400 text-sm">
+                &copy; <span id="year"></span> Mitrawan.
+            </p>
+            <p class="text-gray-400 text-sm flex items-center gap-2">
+                Siap di-hosting di GitHub Pages.
+                <button id="btn-show-login" class="text-gray-600 hover:text-gray-300 focus:outline-none" title="Admin Login"><i class="fas fa-lock text-xs"></i></button>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal untuk Membaca Artikel (Pop-up) -->
+    <div id="article-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <!-- Overlay Gelap -->
+        <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm transition-opacity" id="modal-overlay"></div>
+        
+        <!-- Konten Modal -->
+        <div class="relative bg-white w-full max-w-3xl max-h-[90vh] mx-4 rounded-2xl shadow-2xl flex flex-col overflow-hidden modal-enter" id="modal-content">
+            <!-- Header Modal -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-100">
+                <button id="close-modal" class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition ml-auto">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Isi Artikel -->
+            <div class="p-6 sm:p-10 overflow-y-auto">
+                <img id="modal-img" src="" alt="Thumbnail" class="w-full h-64 object-cover rounded-xl mb-6 hidden">
+                <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                    <span id="modal-date"><i class="far fa-calendar-alt mr-2"></i>-</span>
+                    <span id="modal-category" class="bg-blue-50 text-primary px-3 py-1 rounded-full font-medium">-</span>
+                </div>
+                <h2 id="modal-title" class="text-3xl font-bold text-dark mb-6 leading-tight">Judul Artikel</h2>
+                
+                <!-- Fitur ✨ AI Summarizer -->
+                <div class="mb-8">
+                    <button id="btn-summarize" class="bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 w-fit">
+                        <span>✨</span> Ringkas dengan AI
+                    </button>
+                    <div id="summary-container" class="hidden mt-3 p-4 bg-indigo-50/50 border border-indigo-100 rounded-lg text-indigo-900 text-sm leading-relaxed">
+                    </div>
+                </div>
+
+                <div id="modal-body" class="prose prose-blue max-w-none text-gray-600 leading-relaxed space-y-4">
+                    <!-- Konten artikel akan dimasukkan ke sini -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Admin Dashboard -->
+    <div id="admin-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm" id="admin-overlay"></div>
+        
+        <div class="relative bg-white w-full max-w-4xl max-h-[90vh] mx-4 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-gray-100">
+                <h2 class="text-2xl font-bold text-dark">Admin Dashboard</h2>
+                <button id="close-admin" class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition ml-auto">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Tab Navigasi Admin -->
+            <div class="flex border-b border-gray-100 bg-gray-50 px-6 pt-4">
+                <button id="tab-articles-btn" class="px-4 py-2 font-semibold text-primary border-b-2 border-primary focus:outline-none">Kelola Artikel</button>
+                <button id="tab-settings-btn" class="px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition focus:outline-none">Pengaturan Teks</button>
+            </div>
+            
+            <!-- Daftar Artikel Admin -->
+            <div class="p-6 overflow-y-auto flex-grow bg-gray-50" id="admin-body">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-semibold text-lg">Kelola Artikel</h3>
+                    <button id="btn-new-article" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-md flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Tulis Baru
+                    </button>
+                </div>
+                <div id="admin-articles-list" class="space-y-3">
+                    <!-- List dirender via JS -->
+                </div>
+            </div>
+
+            <!-- Form Edit/Tambah Artikel -->
+            <div class="p-6 overflow-y-auto flex-grow bg-white hidden" id="admin-form-container">
+                <h3 id="form-title-label" class="font-semibold text-lg mb-4">Tulis Artikel Baru</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Judul Artikel</label>
+                        <input type="text" id="form-title" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Masukkan judul...">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                            <input type="text" id="form-category" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Contoh: Teknologi">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">URL Gambar Thumbnail</label>
+                            <input type="text" id="form-image" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ringkasan Pendek (Excerpt)</label>
+                        <textarea id="form-excerpt" rows="2" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Ringkasan singkat untuk halaman depan..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Konten Lengkap (Mendukung HTML)</label>
+                        <textarea id="form-content" rows="8" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary font-mono text-sm" placeholder="<p>Isi artikel di sini...</p>"></textarea>
+                    </div>
+                    <div id="form-error" class="hidden text-red-600 text-sm mt-2"></div>
+                </div>
+                <div class="mt-6 flex gap-3 justify-end">
+                    <button id="btn-cancel-edit" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">Batal</button>
+                    <button id="btn-save-article" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-700 transition shadow-md">Simpan Artikel</button>
+                </div>
+            </div>
+
+            <!-- Pengaturan Teks Website -->
+            <div class="p-6 overflow-y-auto flex-grow bg-white hidden" id="admin-settings-container">
+                <h3 class="font-semibold text-lg mb-4">Pengaturan Teks Beranda</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Subjudul Hero</label>
+                        <input type="text" id="setting-hero-subtitle" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Selamat Datang di Blog Saya">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Judul Hero (Bisa gunakan HTML untuk styling)</label>
+                        <input type="text" id="setting-hero-title" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder='Halo, Saya <span class="text-primary">Mitrawan</span>'>
+                        <p class="text-xs text-gray-500 mt-1">Gunakan tag <code>&lt;span class="text-primary"&gt;Teks&lt;/span&gt;</code> agar warna teks menjadi biru.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Hero</label>
+                        <textarea id="setting-hero-desc" rows="3" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Tentang Saya</label>
+                        <textarea id="setting-about-desc" rows="5" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+                </div>
+                <div class="mt-6 flex gap-3 justify-end">
+                    <button id="btn-save-settings" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-700 transition shadow-md">Simpan Pengaturan</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Login Admin -->
+    <div id="login-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm" id="login-overlay"></div>
+        <div class="relative bg-white w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-dark">Login Admin</h2>
+                <button id="close-login" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="login-email" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="login-password" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div id="login-error" class="hidden text-red-600 text-sm"></div>
+                <button id="btn-login-submit" class="w-full bg-primary text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 transition shadow-md">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logika Web -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Setup API Gemini Terpusat ---
+        const apiKey = ""; 
+
+        async function callGeminiAPI(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            const maxRetries = 5;
+            const baseDelay = 1000;
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, AI tidak dapat menghasilkan teks.";
+                } catch (error) {
+                    if (attempt === maxRetries - 1) return "Gagal terhubung ke layanan AI.";
+                    await new Promise(res => setTimeout(res, baseDelay * Math.pow(2, attempt)));
+                }
+            }
+        }
+
+        // --- Setup Firebase & Auth ---
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let currentUser = null;
+        let unsubscribeArticles = null;
+        let unsubscribeSettings = null;
+        let articles = [];
+
+        // --- Fetch & Render Pengaturan Teks (Bisa diakses publik) ---
+        function loadSettingsFromFirestore() {
+            if (!currentUser) return; // Pastikan user sudah terautentikasi (minimal anonim) sebelum mengambil data
+
+            const settingsDoc = doc(db, 'artifacts', appId, 'public', 'data', 'site_settings', 'main');
+            
+            if (unsubscribeSettings) unsubscribeSettings();
+
+            unsubscribeSettings = onSnapshot(settingsDoc, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if(data.heroSubtitle) {
+                        document.getElementById('display-hero-subtitle').innerHTML = data.heroSubtitle;
+                        document.getElementById('setting-hero-subtitle').value = data.heroSubtitle;
+                    }
+                    if(data.heroTitle) {
+                        document.getElementById('display-hero-title').innerHTML = data.heroTitle;
+                        document.getElementById('setting-hero-title').value = data.heroTitle;
+                    }
+                    if(data.heroDesc) {
+                        document.getElementById('display-hero-desc').innerHTML = data.heroDesc;
+                        document.getElementById('setting-hero-desc').value = data.heroDesc;
+                    }
+                    if(data.aboutDesc) {
+                        document.getElementById('display-about-desc').innerHTML = data.aboutDesc;
+                        document.getElementById('setting-about-desc').value = data.aboutDesc;
+                    }
+                } else {
+                    // Isi form default jika dokumen belum pernah dibuat/disimpan
+                    document.getElementById('setting-hero-subtitle').value = document.getElementById('display-hero-subtitle').innerHTML.trim();
+                    document.getElementById('setting-hero-title').value = document.getElementById('display-hero-title').innerHTML.trim();
+                    document.getElementById('setting-hero-desc').value = document.getElementById('display-hero-desc').innerHTML.trim();
+                    document.getElementById('setting-about-desc').value = document.getElementById('display-about-desc').innerHTML.trim();
+                }
+            }, (error) => {
+                console.error("Gagal mengambil pengaturan:", error);
+            });
+        }
+        
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth init error:", error);
+            }
+        };
+
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const navAdmin = document.getElementById('nav-admin');
+            const mobileNavAdmin = document.getElementById('mobile-nav-admin');
+            const navLogout = document.getElementById('nav-logout');
+            const mobileNavLogout = document.getElementById('mobile-nav-logout');
+
+            if (user) {
+                // Tampilkan menu Admin hanya jika login dengan email/token resmi (bukan pengunjung anonim)
+                if (!user.isAnonymous) {
+                    navAdmin?.classList.remove('hidden');
+                    mobileNavAdmin?.classList.remove('hidden');
+                    navLogout?.classList.remove('hidden');
+                    mobileNavLogout?.classList.remove('hidden');
+                } else {
+                    // Sembunyikan untuk pengunjung biasa
+                    navAdmin?.classList.add('hidden');
+                    mobileNavAdmin?.classList.add('hidden');
+                    navLogout?.classList.add('hidden');
+                    mobileNavLogout?.classList.add('hidden');
+                }
+                loadArticlesFromFirestore();
+                loadSettingsFromFirestore(); // Panggil fungsi ini SETELAH autentikasi selesai
+            }
+        });
+
+        // --- Logika Login & Logout ---
+        const loginModal = document.getElementById('login-modal');
+        const btnShowLogin = document.getElementById('btn-show-login');
+        const closeLoginBtn = document.getElementById('close-login');
+        const loginOverlay = document.getElementById('login-overlay');
+        const btnLoginSubmit = document.getElementById('btn-login-submit');
+
+        btnShowLogin?.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+            document.getElementById('login-error').classList.add('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        const closeLoginModal = () => {
+            loginModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        closeLoginBtn?.addEventListener('click', closeLoginModal);
+        loginOverlay?.addEventListener('click', closeLoginModal);
+
+        btnLoginSubmit?.addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            
+            try {
+                btnLoginSubmit.innerText = 'Memproses...';
+                btnLoginSubmit.disabled = true;
+                await signInWithEmailAndPassword(auth, email, password);
+                closeLoginModal();
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+                
+                // Notifikasi sukses
+                const notif = document.createElement('div');
+                notif.className = 'fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl z-[100] transition-opacity duration-300';
+                notif.innerText = 'Berhasil login sebagai Admin!';
+                document.body.appendChild(notif);
+                setTimeout(() => { notif.style.opacity = '0'; setTimeout(() => notif.remove(), 300); }, 3000);
+
+            } catch (error) {
+                errorDiv.innerText = 'Gagal login: Email atau password salah.';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                btnLoginSubmit.innerText = 'Masuk';
+                btnLoginSubmit.disabled = false;
+            }
+        });
+
+        const handleLogout = async () => {
+            try {
+                await signOut(auth);
+                await signInAnonymously(auth); // Kembali sebagai pengunjung anonim
+                document.getElementById('admin-modal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                
+                // Notifikasi logout
+                const notif = document.createElement('div');
+                notif.className = 'fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-xl z-[100] transition-opacity duration-300';
+                notif.innerText = 'Berhasil logout.';
+                document.body.appendChild(notif);
+                setTimeout(() => { notif.style.opacity = '0'; setTimeout(() => notif.remove(), 300); }, 3000);
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        };
+
+        document.getElementById('nav-logout')?.addEventListener('click', handleLogout);
+        document.getElementById('mobile-nav-logout')?.addEventListener('click', handleLogout);
+
+        // --- Fetch & Render Artikel ---
+        function loadArticlesFromFirestore() {
+            if (!currentUser) return;
+            const articlesRef = collection(db, 'artifacts', appId, 'public', 'data', 'articles');
+            
+            if (unsubscribeArticles) unsubscribeArticles();
+
+            unsubscribeArticles = onSnapshot(articlesRef, (snapshot) => {
+                articles = [];
+                snapshot.forEach((docSnap) => {
+                    articles.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                
+                // Urutkan artikel dari yang terbaru
+                articles.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                
+                renderArticles();
+                renderAdminArticles();
+            }, (error) => {
+                console.error("Gagal mengambil artikel:", error);
+            });
+        }
+
+        const articleGrid = document.getElementById('article-grid');
+        
+        function renderArticles() {
+            if (articles.length === 0) {
+                articleGrid.innerHTML = '<p class="text-gray-500 col-span-full text-center py-10 text-lg">Belum ada artikel yang dipublikasikan.</p>';
                 return;
             }
 
-            let htmlContent = '';
-
-            DATA_PENGALAMAN.forEach((item) => {
-                // Memformat teks agar line break (\n) menjadi <br>
-                const formattedDesc = item.deskripsi.replace(/\n/g, '<br/>');
-
-                // Template Foto jika URL tersedia
-                const photoTemplate = item.fotoBukti ? `
-                    <div class="block overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 group-hover:border-neutral-700 transition-colors mt-2">
-                        <img src="${item.fotoBukti}" alt="Ilustrasi ${item.posisi}" class="w-full h-auto object-cover opacity-70 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500" loading="lazy" />
-                    </div>
-                ` : '';
-
-                htmlContent += `
-                    <div class="relative pl-8 md:pl-12 group">
-                        <!-- Timeline Dot -->
-                        <div class="absolute -left-[5px] top-2 w-[10px] h-[10px] rounded-full bg-neutral-800 group-hover:bg-indigo-500 transition-colors duration-300 timeline-dot"></div>
-                        
-                        <!-- Content Card -->
-                        <div class="grid md:grid-cols-[1fr_250px] gap-8 items-start">
-                            <div>
-                                <h3 class="text-xl font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors">${item.posisi}</h3>
-                                <div class="flex flex-wrap items-center gap-4 text-sm text-neutral-400 mb-6">
-                                    <span class="font-medium text-neutral-300">${item.perusahaan}</span>
-                                    
-                                    <span class="flex items-center gap-1">
-                                        <!-- Calendar Icon -->
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        ${item.periode}
-                                    </span>
-                                    
-                                    <span class="flex items-center gap-1">
-                                        <!-- Map Pin Icon -->
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                        ${item.lokasi}
-                                    </span>
-                                </div>
-                                <p class="text-neutral-400 leading-relaxed font-light text-sm md:text-base">
-                                    ${formattedDesc}
-                                </p>
-                            </div>
-
-                            ${photoTemplate}
+            let html = '';
+            articles.forEach(article => {
+                const imgFallback = `this.src='https://via.placeholder.com/800x400?text=Gambar+Artikel'`;
+                html += `
+                <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col cursor-pointer" onclick="window.openArticle('${article.id}')">
+                    <img src="${article.image}" alt="${article.title}" class="w-full h-48 object-cover" onerror="${imgFallback}">
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                            <span class="font-medium text-primary bg-blue-50 px-2 py-1 rounded">${article.category}</span>
+                            <span>${article.date}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 leading-tight">${article.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${article.excerpt}</p>
+                        <div class="mt-auto pt-4 border-t border-gray-50 flex items-center text-primary font-medium text-sm">
+                            Baca selengkapnya <i class="fas fa-arrow-right ml-2 text-xs"></i>
                         </div>
                     </div>
+                </article>
                 `;
             });
+            articleGrid.innerHTML = html;
+        }
 
-            container.innerHTML = htmlContent;
+        // --- Logika Modal & Summarizer AI ---
+        const modal = document.getElementById('article-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContentContainer = document.getElementById('modal-content');
+        const btnCloseModal = document.getElementById('close-modal');
+        const btnSummarize = document.getElementById('btn-summarize');
+        const summaryContainer = document.getElementById('summary-container');
+        let currentArticleContent = "";
+
+        window.openArticle = (id) => {
+            const article = articles.find(a => a.id === id);
+            if(!article) return;
+
+            currentArticleContent = article.content.replace(/<[^>]*>?/gm, ''); 
+
+            summaryContainer.classList.add('hidden');
+            summaryContainer.innerHTML = '';
+            btnSummarize.disabled = false;
+            btnSummarize.innerHTML = '<span>✨</span> Ringkas dengan AI';
+
+            document.getElementById('modal-title').innerText = article.title;
+            document.getElementById('modal-date').innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${article.date}`;
+            document.getElementById('modal-category').innerText = article.category;
+            document.getElementById('modal-body').innerHTML = article.content;
+            
+            const modalImg = document.getElementById('modal-img');
+            if(article.image) {
+                modalImg.src = article.image;
+                modalImg.classList.remove('hidden');
+            } else {
+                modalImg.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => { modalContentContainer.classList.add('modal-enter-active'); }, 10);
+            document.body.style.overflow = 'hidden';
+        };
+
+        btnSummarize.addEventListener('click', async () => {
+            btnSummarize.disabled = true;
+            btnSummarize.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sedang Meringkas...';
+            summaryContainer.classList.remove('hidden');
+            summaryContainer.innerHTML = '<span class="text-indigo-400">AI sedang membaca artikel ini...</span>';
+
+            const prompt = `Buatkan ringkasan dari artikel blog berikut ke dalam Bahasa Indonesia yang kasual, padat, dan jelas (maksimal 3 kalimat).\n\n${currentArticleContent}`;
+            const summary = await callGeminiAPI(prompt);
+            const formattedSummary = summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            summaryContainer.innerHTML = `<strong>✨ Ringkasan Cepat:</strong><br><p class="mt-1">${formattedSummary}</p>`;
+            btnSummarize.innerHTML = '<span>✨</span> Ringkas Ulang';
+            btnSummarize.disabled = false;
         });
+
+        const closeArticleModal = () => {
+            modalContentContainer.classList.remove('modal-enter-active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 300);
+        };
+
+        btnCloseModal.addEventListener('click', closeArticleModal);
+        modalOverlay.addEventListener('click', closeArticleModal);
+
+        // --- Logika Admin Panel (CRUD Artikel) ---
+        const adminModal = document.getElementById('admin-modal');
+        const adminBody = document.getElementById('admin-body');
+        const adminFormContainer = document.getElementById('admin-form-container');
+        const adminArticlesList = document.getElementById('admin-articles-list');
+        const btnNewArticle = document.getElementById('btn-new-article');
+        const btnCancelEdit = document.getElementById('btn-cancel-edit');
+        const btnSaveArticle = document.getElementById('btn-save-article');
+
+        let editingArticleId = null;
+
+        // Element Tab Admin
+        const tabArticlesBtn = document.getElementById('tab-articles-btn');
+        const tabSettingsBtn = document.getElementById('tab-settings-btn');
+        const adminSettingsContainer = document.getElementById('admin-settings-container');
+
+        const switchToArticlesTab = () => {
+            tabArticlesBtn.className = "px-4 py-2 font-semibold text-primary border-b-2 border-primary focus:outline-none";
+            tabSettingsBtn.className = "px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition focus:outline-none";
+            adminBody.classList.remove('hidden');
+            adminSettingsContainer.classList.add('hidden');
+            adminFormContainer.classList.add('hidden');
+        };
+
+        const switchToSettingsTab = () => {
+            tabSettingsBtn.className = "px-4 py-2 font-semibold text-primary border-b-2 border-primary focus:outline-none";
+            tabArticlesBtn.className = "px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition focus:outline-none";
+            adminBody.classList.add('hidden');
+            adminSettingsContainer.classList.remove('hidden');
+            adminFormContainer.classList.add('hidden');
+        };
+
+        tabArticlesBtn?.addEventListener('click', switchToArticlesTab);
+        tabSettingsBtn?.addEventListener('click', switchToSettingsTab);
+
+        const openAdminPanel = (e) => {
+            e.preventDefault();
+            adminModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderAdminArticles();
+        };
+
+        const closeAdminPanel = () => {
+            adminModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            switchToArticlesTab(); // Reset ke tab artikel saat ditutup
+        };
+
+        document.getElementById('nav-admin').addEventListener('click', openAdminPanel);
+        document.getElementById('mobile-nav-admin').addEventListener('click', openAdminPanel);
+        document.getElementById('close-admin').addEventListener('click', closeAdminPanel);
+        document.getElementById('admin-overlay').addEventListener('click', closeAdminPanel);
+
+        // --- Simpan Pengaturan Teks ---
+        document.getElementById('btn-save-settings')?.addEventListener('click', async () => {
+            const btn = document.getElementById('btn-save-settings');
+            const heroSubtitle = document.getElementById('setting-hero-subtitle').value;
+            const heroTitle = document.getElementById('setting-hero-title').value;
+            const heroDesc = document.getElementById('setting-hero-desc').value;
+            const aboutDesc = document.getElementById('setting-about-desc').value;
+
+            try {
+                btn.disabled = true;
+                btn.innerText = 'Menyimpan...';
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'site_settings', 'main'), {
+                    heroSubtitle,
+                    heroTitle,
+                    heroDesc,
+                    aboutDesc,
+                    updatedAt: Date.now()
+                }, { merge: true });
+                
+                btn.innerText = 'Berhasil Disimpan!';
+                setTimeout(() => {
+                    btn.innerText = 'Simpan Pengaturan';
+                    btn.disabled = false;
+                }, 2000);
+            } catch(e) {
+                console.error('Error saving settings:', e);
+                btn.innerText = 'Gagal Simpan';
+                setTimeout(() => {
+                    btn.innerText = 'Simpan Pengaturan';
+                    btn.disabled = false;
+                }, 2000);
+            }
+        });
+
+        function renderAdminArticles() {
+            if (articles.length === 0) {
+                adminArticlesList.innerHTML = '<p class="text-gray-500 text-sm italic">Belum ada artikel. Klik "Tulis Baru" untuk memulai.</p>';
+                return;
+            }
+
+            let html = '';
+            articles.forEach(article => {
+                html += `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center gap-4">
+                    <div class="flex-grow min-w-0">
+                        <h4 class="font-bold text-dark truncate">${article.title}</h4>
+                        <p class="text-xs text-gray-500">${article.date} &bull; ${article.category}</p>
+                    </div>
+                    <div class="flex gap-2 flex-shrink-0">
+                        <button onclick="window.editArticle('${article.id}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-sm font-medium transition">Edit</button>
+                        <button onclick="window.requestDelete('${article.id}', this)" class="px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium transition">Hapus</button>
+                    </div>
+                </div>
+                `;
+            });
+            adminArticlesList.innerHTML = html;
+        }
+
+        window.editArticle = (id) => {
+            const article = articles.find(a => a.id === id);
+            if(!article) return;
+            
+            editingArticleId = id;
+            document.getElementById('form-title-label').innerText = 'Edit Artikel';
+            document.getElementById('form-title').value = article.title || '';
+            document.getElementById('form-category').value = article.category || '';
+            document.getElementById('form-image').value = article.image || '';
+            document.getElementById('form-excerpt').value = article.excerpt || '';
+            document.getElementById('form-content').value = article.content || '';
+            
+            adminBody.classList.add('hidden');
+            adminFormContainer.classList.remove('hidden');
+        };
+
+        window.requestDelete = async (id, btn) => {
+            if (btn.innerText === 'Yakin Hapus?') {
+                btn.innerText = 'Menghapus...';
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'articles', id));
+                } catch (e) {
+                    console.error("Gagal hapus:", e);
+                    btn.innerText = 'Gagal';
+                }
+            } else {
+                const oriText = btn.innerText;
+                const oriBg = btn.className;
+                btn.innerText = 'Yakin Hapus?';
+                btn.className = 'px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition';
+                setTimeout(() => {
+                    if(btn && btn.innerText === 'Yakin Hapus?') {
+                        btn.innerText = oriText;
+                        btn.className = oriBg;
+                    }
+                }, 3000);
+            }
+        };
+
+        btnNewArticle.addEventListener('click', () => {
+            editingArticleId = null;
+            document.getElementById('form-title-label').innerText = 'Tulis Artikel Baru';
+            document.getElementById('form-title').value = '';
+            document.getElementById('form-category').value = '';
+            document.getElementById('form-image').value = '';
+            document.getElementById('form-excerpt').value = '';
+            document.getElementById('form-content').value = '';
+            
+            adminBody.classList.add('hidden');
+            adminFormContainer.classList.remove('hidden');
+        });
+
+        btnCancelEdit.addEventListener('click', () => {
+            adminBody.classList.remove('hidden');
+            adminFormContainer.classList.add('hidden');
+        });
+
+        btnSaveArticle.addEventListener('click', async () => {
+            const title = document.getElementById('form-title').value.trim();
+            const category = document.getElementById('form-category').value.trim();
+            const image = document.getElementById('form-image').value.trim();
+            const excerpt = document.getElementById('form-excerpt').value.trim();
+            const content = document.getElementById('form-content').value.trim();
+            const errorMsg = document.getElementById('form-error');
+
+            if(!title || !content) {
+                errorMsg.innerText = 'Judul dan Konten artikel wajib diisi.';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+
+            const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            const articleData = {
+                title, 
+                category: category || 'Umum', 
+                image: image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 
+                excerpt: excerpt || 'Tidak ada ringkasan', 
+                content, 
+                date: dateStr,
+                updatedAt: Date.now()
+            };
+
+            try {
+                btnSaveArticle.disabled = true;
+                btnSaveArticle.innerText = 'Menyimpan...';
+
+                if (editingArticleId) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'articles', editingArticleId), articleData);
+                } else {
+                    articleData.createdAt = Date.now();
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'articles'), articleData);
+                }
+                
+                adminBody.classList.remove('hidden');
+                adminFormContainer.classList.add('hidden');
+            } catch (e) {
+                console.error("Gagal simpan:", e);
+                errorMsg.innerText = 'Terjadi kesalahan saat menyimpan data.';
+                errorMsg.classList.remove('hidden');
+            } finally {
+                btnSaveArticle.disabled = false;
+                btnSaveArticle.innerText = 'Simpan Artikel';
+            }
+        });
+
+        // --- Menu Mobile Navigasi ---
+        const btnMobileMenu = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        btnMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        const mobileLinks = mobileMenu.querySelectorAll('a, button');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // --- Inisialisasi DOM ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+
     </script>
 </body>
 </html>
