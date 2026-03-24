@@ -38,12 +38,33 @@
         /* Animasi untuk modal */
         .modal-enter { opacity: 0; transform: scale(0.95); }
         .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.3s ease-out; }
+        
+        /* --- Kustomisasi UI Baru --- */
+        /* Scrollbar cantik */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Efek Kaca (Glassmorphism) untuk Navbar */
+        .glass-nav { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+        
+        /* Animasi Transisi Halaman (Fade In Up) */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
     </style>
 </head>
 <body class="bg-light text-slate-800 antialiased flex flex-col min-h-screen">
 
     <!-- Navigasi (Navbar) -->
-    <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <nav class="glass-nav shadow-sm sticky top-0 z-40 border-b border-gray-100 transition-all duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center">
@@ -85,7 +106,7 @@
     <main class="flex-grow flex flex-col">
 
         <!-- Halaman Beranda -->
-        <section id="beranda" class="page-section flex-grow pt-10 pb-16 lg:pt-24 lg:pb-28 overflow-hidden hidden">
+        <section id="beranda" class="page-section flex-grow pt-10 pb-16 lg:pt-24 lg:pb-28 overflow-hidden hidden bg-gradient-to-br from-white to-blue-50/50">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
                     <div class="w-full lg:w-1/2 text-center lg:text-left">
@@ -108,7 +129,8 @@
                     <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
                         <div class="relative w-64 h-64 sm:w-80 sm:h-80">
                             <div class="absolute inset-0 bg-primary rounded-full opacity-10 blur-2xl transform scale-110"></div>
-                            <img src="https://files.catbox.moe/3t0jyz.jpg" alt="Foto Profil" class="relative rounded-full object-cover w-full h-full shadow-2xl border-4 border-white" onerror="this.src='https://ui-avatars.com/api/?name=Mitrawan&size=512&background=2563eb&color=fff'">
+                            <!-- Tambahkan ID 'display-hero-image' agar gambarnya bisa diubah via Javascript -->
+                            <img id="display-hero-image" src="https://files.catbox.moe/3t0jyz.jpg" alt="Foto Profil" class="relative rounded-full object-cover w-full h-full shadow-2xl border-4 border-white" onerror="this.src='https://ui-avatars.com/api/?name=Mitrawan&size=512&background=2563eb&color=fff'">
                         </div>
                     </div>
                 </div>
@@ -143,9 +165,9 @@
         </section>
 
         <!-- Halaman Bot WA -->
-        <section id="bot-wa" class="page-section py-20 bg-white flex-grow hidden">
+        <section id="bot-wa" class="page-section py-20 bg-gradient-to-b from-white to-green-50 flex-grow hidden">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500 text-5xl">
+                <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-5xl shadow-lg shadow-green-200 transform transition hover:scale-110 duration-300">
                     <i class="fas fa-robot"></i>
                 </div>
                 <h2 class="text-3xl font-bold text-dark">Bot WhatsApp Pintar</h2>
@@ -302,6 +324,11 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Judul Hero</label>
                                 <input type="text" id="setting-hero-title" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder='Halo, Saya <span class="text-primary">Mitrawan</span>'>
                             </div>
+                            <!-- Tambahan Input untuk Foto Profil -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">URL Foto Profil Beranda</label>
+                                <input type="text" id="setting-hero-image" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Hero</label>
                                 <textarea id="setting-hero-desc" rows="3" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
@@ -395,15 +422,20 @@
             // Sembunyikan semua halaman
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.add('hidden');
+                section.classList.remove('animate-fade-in'); // Reset animasi
             });
             
             // Tampilkan halaman target
             const targetSection = document.querySelector(hash);
             if (targetSection) {
                 targetSection.classList.remove('hidden');
+                // Beri sedikit delay agar animasi terlihat saat berganti halaman
+                setTimeout(() => targetSection.classList.add('animate-fade-in'), 10);
             } else {
                 // Jika hash tidak ditemukan, kembali ke beranda
-                document.getElementById('beranda').classList.remove('hidden');
+                const beranda = document.getElementById('beranda');
+                beranda.classList.remove('hidden');
+                setTimeout(() => beranda.classList.add('animate-fade-in'), 10);
             }
             
             // Gulir ke atas
@@ -480,6 +512,12 @@
                         document.getElementById('display-hero-title').innerHTML = data.heroTitle;
                         document.getElementById('setting-hero-title').value = data.heroTitle;
                     }
+                    if(data.heroImage) {
+                        document.getElementById('display-hero-image').src = data.heroImage;
+                        document.getElementById('setting-hero-image').value = data.heroImage;
+                    } else {
+                        document.getElementById('setting-hero-image').value = document.getElementById('display-hero-image').src;
+                    }
                     if(data.heroDesc) {
                         document.getElementById('display-hero-desc').innerHTML = data.heroDesc;
                         document.getElementById('setting-hero-desc').value = data.heroDesc;
@@ -495,6 +533,7 @@
                 } else {
                     document.getElementById('setting-hero-subtitle').value = document.getElementById('display-hero-subtitle').innerHTML.trim();
                     document.getElementById('setting-hero-title').value = document.getElementById('display-hero-title').innerHTML.trim();
+                    document.getElementById('setting-hero-image').value = document.getElementById('display-hero-image').src;
                     document.getElementById('setting-hero-desc').value = document.getElementById('display-hero-desc').innerHTML.trim();
                     document.getElementById('setting-about-desc').value = document.getElementById('display-about-desc').innerHTML.trim();
                     document.getElementById('setting-bot-desc').value = document.getElementById('display-bot-desc').innerHTML.trim();
@@ -644,17 +683,19 @@
             articles.forEach(article => {
                 const imgFallback = `this.src='https://via.placeholder.com/800x400?text=Gambar+Artikel'`;
                 html += `
-                <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col cursor-pointer" onclick="window.openArticle('${article.id}')">
-                    <img src="${article.image}" alt="${article.title}" class="w-full h-48 object-cover" onerror="${imgFallback}">
-                    <div class="p-6 flex flex-col flex-grow">
+                <article class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col cursor-pointer" onclick="window.openArticle('${article.id}')">
+                    <div class="overflow-hidden">
+                        <img src="${article.image}" alt="${article.title}" class="w-full h-48 object-cover transform group-hover:scale-105 transition duration-500" onerror="${imgFallback}">
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow relative">
                         <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
                             <span class="font-medium text-primary bg-blue-50 px-2 py-1 rounded">${article.category}</span>
                             <span>${article.date}</span>
                         </div>
-                        <h3 class="text-xl font-bold text-dark mb-2 leading-tight">${article.title}</h3>
+                        <h3 class="text-xl font-bold text-dark mb-2 leading-tight group-hover:text-primary transition-colors">${article.title}</h3>
                         <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${article.excerpt}</p>
                         <div class="mt-auto pt-4 border-t border-gray-50 flex items-center text-primary font-medium text-sm">
-                            Baca selengkapnya <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                            Baca selengkapnya <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
                 </article>
@@ -786,6 +827,7 @@
             const btn = document.getElementById('btn-save-settings');
             const heroSubtitle = document.getElementById('setting-hero-subtitle').value;
             const heroTitle = document.getElementById('setting-hero-title').value;
+            const heroImage = document.getElementById('setting-hero-image').value;
             const heroDesc = document.getElementById('setting-hero-desc').value;
             const aboutDesc = document.getElementById('setting-about-desc').value;
             const botDesc = document.getElementById('setting-bot-desc').value;
@@ -796,6 +838,7 @@
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'site_settings', 'main'), {
                     heroSubtitle,
                     heroTitle,
+                    heroImage,
                     heroDesc,
                     aboutDesc,
                     botDesc,
