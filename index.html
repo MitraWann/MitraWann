@@ -9,14 +9,14 @@
     <!-- Konfigurasi warna kustom Tailwind -->
     <script>
         tailwind.config = {
-            darkMode: 'class', // Mengaktifkan dark mode manual berbasis class
+            darkMode: 'class', 
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FD3F4D', // Warna merah menyala baru Anda
-                        'primary-hover': '#e03543', // Warna merah sedikit lebih gelap untuk efek hover
-                        dark: '#242333', // Warna background gelap
-                        darker: '#1a1925', // Versi lebih gelap untuk footer/modal
+                        primary: '#FD3F4D', 
+                        'primary-hover': '#e03543', 
+                        dark: '#242333', 
+                        darker: '#1a1925', 
                         light: '#f8fafc'
                     },
                     fontFamily: {
@@ -58,6 +58,10 @@
         html.dark ::-webkit-scrollbar-thumb { background: #4a4860; }
         ::-webkit-scrollbar-thumb:hover { background: #FD3F4D; }
         
+        /* Menyembunyikan scrollbar untuk menu tab admin di HP tapi tetap bisa di-scroll */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
         /* Animasi Transisi Halaman (Fade In Up) */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(15px); }
@@ -66,10 +70,11 @@
         .animate-fade-in { animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
     </style>
 </head>
-<body class="bg-light dark:bg-darker text-slate-800 dark:text-gray-200 antialiased flex flex-col min-h-screen transition-colors duration-300">
+<!-- Menambahkan overflow-x-hidden dan w-full pada body untuk mencegah layar HP terpotong -->
+<body class="bg-light dark:bg-darker text-slate-800 dark:text-gray-200 antialiased flex flex-col min-h-screen transition-colors duration-300 w-full overflow-x-hidden">
 
     <!-- Navigasi (Navbar) -->
-    <nav class="bg-white/90 dark:bg-[#242333]/90 backdrop-blur-md shadow-sm dark:shadow-md sticky top-0 z-40 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
+    <nav class="bg-white/90 dark:bg-[#242333]/90 backdrop-blur-md shadow-sm dark:shadow-md sticky top-0 z-40 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 w-full">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center">
@@ -118,15 +123,14 @@
     </nav>
 
     <!-- Kontainer Utama -->
-    <main class="flex-grow flex flex-col">
+    <main class="flex-grow flex flex-col w-full overflow-hidden">
 
         <!-- Halaman Beranda -->
-        <section id="beranda" class="page-section flex-grow pt-10 pb-16 lg:pt-24 lg:pb-28 overflow-hidden hidden bg-light dark:bg-dark relative transition-colors duration-300">
-            <!-- Elemen Dekorasi -->
+        <section id="beranda" class="page-section flex-grow pt-10 pb-16 lg:pt-24 lg:pb-28 overflow-hidden hidden bg-light dark:bg-dark relative transition-colors duration-300 w-full">
             <div class="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-primary opacity-[0.08] dark:opacity-[0.15] rounded-full blur-3xl"></div>
             <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-primary opacity-[0.08] dark:opacity-[0.15] rounded-full blur-3xl"></div>
             
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
                 <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
                     <div class="w-full lg:w-1/2 text-center lg:text-left">
                         <span id="display-hero-subtitle" class="text-primary font-semibold tracking-wide uppercase text-sm">Selamat Datang di Blog Saya</span>
@@ -156,18 +160,18 @@
         </section>
 
         <!-- Halaman Tentang -->
-        <section id="tentang" class="page-section py-20 bg-white dark:bg-darker flex-grow hidden transition-colors duration-300">
+        <section id="tentang" class="page-section py-20 bg-white dark:bg-darker flex-grow hidden transition-colors duration-300 w-full">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-3xl font-bold text-dark dark:text-white">Tentang Saya</h2>
                 <div class="w-16 h-1 bg-primary mx-auto mt-4 rounded"></div>
-                <p id="display-about-desc" class="mt-6 text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
+                <p id="display-about-desc" class="mt-6 text-gray-600 dark:text-gray-400 leading-relaxed text-lg break-words">
                     Saya mulai menulis kode sejak tahun 2018 dan jatuh cinta pada pengembangan web. Melalui blog ini, saya berharap dapat mendokumentasikan perjalanan karir saya, berbagi solusi teknis yang saya temukan, dan sesekali menulis tentang buku atau produktivitas. Ketika tidak sedang di depan komputer, saya biasanya bersepeda atau menikmati kopi di kedai lokal.
                 </p>
             </div>
         </section>
 
         <!-- Halaman Artikel -->
-        <section id="artikel" class="page-section py-20 bg-light dark:bg-dark flex-grow hidden transition-colors duration-300">
+        <section id="artikel" class="page-section py-20 bg-light dark:bg-dark flex-grow hidden transition-colors duration-300 w-full">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-end mb-10">
                     <div>
@@ -183,14 +187,14 @@
         </section>
 
         <!-- Halaman Bot WA -->
-        <section id="bot-wa" class="page-section py-20 bg-gray-50 dark:bg-darker flex-grow hidden relative transition-colors duration-300">
+        <section id="bot-wa" class="page-section py-20 bg-gray-50 dark:bg-darker flex-grow hidden relative transition-colors duration-300 w-full">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                 <div class="w-24 h-24 bg-primary/10 dark:bg-primary/20 border-2 border-primary/50 dark:border-primary rounded-full flex items-center justify-center mx-auto mb-6 text-primary text-5xl shadow-lg shadow-red-500/10 dark:shadow-red-500/20 transform transition hover:scale-110 duration-300">
                     <i class="fas fa-robot"></i>
                 </div>
                 <h2 class="text-3xl font-bold text-dark dark:text-white">Bot WhatsApp Pintar</h2>
                 <div class="w-16 h-1 bg-primary mx-auto mt-4 rounded"></div>
-                <p id="display-bot-desc" class="mt-6 text-gray-600 dark:text-gray-300 leading-relaxed text-lg mb-10">
+                <p id="display-bot-desc" class="mt-6 text-gray-600 dark:text-gray-300 leading-relaxed text-lg mb-10 break-words">
                     Halo! Selain menulis di blog, saya juga mengembangkan Bot WhatsApp yang dapat membantu berbagai keperluan Anda. Mulai dari informasi cepat, layanan otomatisasi, hingga fitur interaktif lainnya siap melayani Anda 24/7.
                 </p>
                 <a href="https://wa.me/628989240628?text=.menu" target="_blank" class="inline-flex items-center gap-3 bg-green-500 text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition shadow-lg shadow-green-500/30 text-lg border-2 border-transparent hover:border-green-400 hover:scale-105 transform">
@@ -201,7 +205,7 @@
         </section>
 
         <!-- Halaman Kontak -->
-        <section id="kontak" class="page-section py-20 bg-white dark:bg-dark flex-grow hidden transition-colors duration-300">
+        <section id="kontak" class="page-section py-20 bg-white dark:bg-dark flex-grow hidden transition-colors duration-300 w-full">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-3xl font-bold text-dark dark:text-white">Mari Berkolaborasi</h2>
                 <div class="w-16 h-1 bg-primary mx-auto mt-4 mb-8 rounded"></div>
@@ -228,7 +232,7 @@
         </section>
 
         <!-- Halaman Baca Artikel -->
-        <section id="baca-artikel" class="page-section py-10 sm:py-20 bg-white dark:bg-darker flex-grow hidden transition-colors duration-300">
+        <section id="baca-artikel" class="page-section py-10 sm:py-20 bg-white dark:bg-darker flex-grow hidden transition-colors duration-300 w-full">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <a href="#artikel" class="inline-flex items-center text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary font-medium mb-6 sm:mb-8 transition bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg">
                     <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Artikel
@@ -241,7 +245,7 @@
                     <span id="baca-category" class="bg-red-50 dark:bg-red-500/10 text-primary px-3 py-1 rounded-full font-medium">-</span>
                 </div>
                 
-                <h1 id="baca-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-dark dark:text-white mb-6 leading-tight">Judul Artikel</h1>
+                <h1 id="baca-title" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-dark dark:text-white mb-6 leading-tight break-words">Judul Artikel</h1>
                 
                 <!-- Fitur ✨ AI Summarizer -->
                 <div class="mb-10">
@@ -252,38 +256,45 @@
                     </div>
                 </div>
 
-                <!-- Bagian Konten Artikel -->
-                <div id="baca-body" class="prose prose-sm sm:prose-base lg:prose-lg prose-red dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
+                <!-- Bagian Konten Artikel. overflow-hidden break-words mencegah konten jebol di HP -->
+                <div id="baca-body" class="prose prose-sm sm:prose-base lg:prose-lg prose-red dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed overflow-hidden break-words">
                     <!-- Konten artikel -->
                 </div>
             </div>
         </section>
 
         <!-- Halaman Admin Dashboard -->
-        <section id="admin-dashboard" class="page-section py-10 sm:py-20 bg-light dark:bg-dark flex-grow hidden transition-colors duration-300">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-darker rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden transition-colors duration-300">
-                    <div class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
-                        <h2 class="text-2xl font-bold text-dark dark:text-white">Admin Dashboard</h2>
+        <section id="admin-dashboard" class="page-section py-6 sm:py-16 bg-light dark:bg-dark flex-grow hidden transition-colors duration-300 w-full">
+            <div class="w-full max-w-6xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-darker sm:rounded-2xl shadow-sm border-y sm:border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden transition-colors duration-300 min-h-[70vh]">
+                    
+                    <!-- Header Admin -->
+                    <div class="flex justify-between items-center p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
+                        <h2 class="text-xl sm:text-2xl font-bold text-dark dark:text-white">Admin Dashboard</h2>
                     </div>
 
-                    <div class="flex border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 pt-4 overflow-x-auto">
+                    <!-- Tab Menu Admin -->
+                    <div class="flex border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-2 sm:px-6 pt-2 sm:pt-4 overflow-x-auto scrollbar-hide">
                         <button id="tab-articles-btn" class="px-4 py-2 font-semibold text-primary border-b-2 border-primary focus:outline-none whitespace-nowrap transition-colors duration-300">Kelola Artikel</button>
-                        <button id="tab-settings-btn" class="px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-200 transition focus:outline-none whitespace-nowrap duration-300">Pengaturan Teks</button>
+                        <button id="tab-profile-btn" class="px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-200 transition focus:outline-none whitespace-nowrap duration-300">Profil Saya</button>
+                        <button id="tab-home-btn" class="px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-200 transition focus:outline-none whitespace-nowrap duration-300">Tampilan Beranda</button>
+                        <button id="tab-other-btn" class="px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-200 transition focus:outline-none whitespace-nowrap duration-300">Pengaturan Lain</button>
                     </div>
                     
-                    <div class="p-6 overflow-y-auto bg-white dark:bg-darker" id="admin-body">
+                    <!-- 1. Tab Konten: Kelola Artikel -->
+                    <div class="p-4 sm:p-6 overflow-y-auto bg-white dark:bg-darker" id="admin-body">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-semibold text-lg text-dark dark:text-white">Kelola Artikel</h3>
-                            <button id="btn-new-article" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-hover transition shadow-md flex items-center gap-2">
-                                <i class="fas fa-plus"></i> Tulis Baru
+                            <h3 class="font-semibold text-lg text-dark dark:text-white">Daftar Artikel</h3>
+                            <button id="btn-new-article" class="bg-primary text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-hover transition shadow-md flex items-center gap-2">
+                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">Tulis Baru</span><span class="sm:hidden">Baru</span>
                             </button>
                         </div>
                         <div id="admin-articles-list" class="space-y-3">
                         </div>
                     </div>
 
-                    <div class="p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-form-container">
+                    <!-- 1.1 Form Edit/Tambah Artikel -->
+                    <div class="p-4 sm:p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-form-container">
                         <h3 id="form-title-label" class="font-semibold text-lg mb-4 text-dark dark:text-white">Tulis Artikel Baru</h3>
                         <div class="space-y-4">
                             <div>
@@ -325,43 +336,67 @@
                             <div id="form-error" class="hidden text-primary text-sm mt-2"></div>
                         </div>
                         <div class="mt-6 flex gap-3 justify-end">
-                            <button id="btn-cancel-edit" class="px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Batal</button>
-                            <button id="btn-save-article" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md">Simpan Artikel</button>
+                            <button id="btn-cancel-edit" class="px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-sm sm:text-base">Batal</button>
+                            <button id="btn-save-article" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md text-sm sm:text-base">Simpan Artikel</button>
                         </div>
                     </div>
 
-                    <div class="p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-settings-container">
-                        <h3 class="font-semibold text-lg mb-4 text-dark dark:text-white">Pengaturan Teks Website</h3>
+                    <!-- 2. Tab Konten: Profil Saya -->
+                    <div class="p-4 sm:p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-profile-container">
+                        <h3 class="font-semibold text-lg mb-4 text-dark dark:text-white">Pengaturan Profil Utama</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL Foto Profil Beranda</label>
+                                <input type="text" id="setting-hero-image" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
+                                <p class="text-xs text-gray-500 mt-1">Gunakan link gambar langsung berakhiran .jpg/.png.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi "Tentang Saya"</label>
+                                <textarea id="setting-about-desc" rows="6" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Ceritakan tentang diri Anda..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button class="btn-save-settings px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md w-full sm:w-auto">Simpan Profil</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Tab Konten: Tampilan Beranda -->
+                    <div class="p-4 sm:p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-home-container">
+                        <h3 class="font-semibold text-lg mb-4 text-dark dark:text-white">Teks di Halaman Utama</h3>
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subjudul Hero</label>
                                 <input type="text" id="setting-hero-subtitle" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="Selamat Datang di Blog Saya">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Hero</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Hero Utama</label>
                                 <input type="text" id="setting-hero-title" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder='Halo, Saya <span class="text-primary">Mitrawan</span>'>
+                                <p class="text-xs text-gray-500 mt-1">Anda bisa menggunakan tag HTML seperti &lt;span class="text-primary"&gt;Teks&lt;/span&gt; untuk memberi warna khusus.</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL Foto Profil Beranda</label>
-                                <input type="text" id="setting-hero-image" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Hero</label>
-                                <textarea id="setting-hero-desc" rows="3" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Tentang Saya</label>
-                                <textarea id="setting-about-desc" rows="4" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Bot WA</label>
-                                <textarea id="setting-bot-desc" rows="4" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Hero Singkat</label>
+                                <textarea id="setting-hero-desc" rows="4" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
                             </div>
                         </div>
-                        <div class="mt-6 flex gap-3 justify-end">
-                            <button id="btn-save-settings" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md">Simpan Pengaturan</button>
+                        <div class="mt-6 flex justify-end">
+                            <button class="btn-save-settings px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md w-full sm:w-auto">Simpan Tampilan</button>
                         </div>
                     </div>
+
+                    <!-- 4. Tab Konten: Pengaturan Lain -->
+                    <div class="p-4 sm:p-6 overflow-y-auto bg-white dark:bg-darker hidden" id="admin-other-container">
+                        <h3 class="font-semibold text-lg mb-4 text-dark dark:text-white">Pengaturan Fitur Ekstra</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Halaman Bot WhatsApp</label>
+                                <textarea id="setting-bot-desc" rows="5" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-dark dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button class="btn-save-settings px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition shadow-md w-full sm:w-auto">Simpan Pengaturan</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -369,14 +404,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#1a1925] py-8 border-t border-gray-800 dark:border-gray-900 transition-colors duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-gray-400 text-sm">
+    <footer class="bg-[#1a1925] py-4 border-t border-gray-800 dark:border-gray-900 transition-colors duration-300 w-full">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
+            <p class="text-gray-400 text-sm text-center md:text-left">
                 &copy; <span id="year"></span> Mitrawan.
             </p>
-            <p class="text-gray-400 text-sm flex items-center gap-2">
+            <p class="text-gray-400 text-sm flex items-center justify-center gap-2">
                 Powered by GitHub Pages.
-                <button id="btn-show-login" class="text-gray-500 hover:text-primary focus:outline-none transition-colors" title="Admin Login"><i class="fas fa-lock text-xs"></i></button>
+                <button id="btn-show-login" class="text-gray-500 hover:text-primary focus:outline-none transition-colors p-2" title="Admin Login"><i class="fas fa-lock text-xs"></i></button>
             </p>
         </div>
     </footer>
@@ -410,14 +445,23 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Fungsi bantuan yang aman (mencegah error 'null')
+        const getEl = id => document.getElementById(id);
+        const safeSetHTML = (id, html) => { const el = getEl(id); if (el) el.innerHTML = html; };
+        const safeSetValue = (id, val) => { const el = getEl(id); if (el) el.value = val; };
+        const safeSetSrc = (id, src) => { const el = getEl(id); if (el) el.src = src; };
+        const safeGetHTML = (id) => { const el = getEl(id); return el ? el.innerHTML.trim() : ''; };
+        const safeGetSrc = (id) => { const el = getEl(id); return el ? el.src : ''; };
+        const safeGetValue = (id) => { const el = getEl(id); return el ? el.value.trim() : ''; };
+
         // --- Logika Theme Toggle ---
-        const themeToggleBtns = [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')];
+        const themeToggleBtns = [getEl('theme-toggle'), getEl('theme-toggle-mobile')];
         const themeIcons = document.querySelectorAll('.theme-icon');
 
         function updateThemeIcons() {
             const isDark = document.documentElement.classList.contains('dark');
             themeIcons.forEach(icon => {
-                icon.className = isDark ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
+                if (icon) icon.className = isDark ? 'fas fa-sun text-yellow-400' : 'fas fa-moon';
             });
         }
 
@@ -433,14 +477,14 @@
         }
 
         themeToggleBtns.forEach(btn => btn?.addEventListener('click', toggleTheme));
-        updateThemeIcons(); // Inisialisasi ikon saat pertama dimuat
+        updateThemeIcons(); 
 
         // --- SPA Routing Logic ---
         function handleNavigation() {
             let hash = window.location.hash || '#beranda';
             
             if (hash === '#baca-artikel') {
-                const titleEl = document.getElementById('baca-title');
+                const titleEl = getEl('baca-title');
                 if (!titleEl || titleEl.innerText === 'Judul Artikel') {
                     hash = '#artikel';
                     window.location.hash = hash;
@@ -449,7 +493,7 @@
             }
 
             if (hash === '#admin-dashboard') {
-                const navAdmin = document.getElementById('nav-admin');
+                const navAdmin = getEl('nav-admin');
                 if (navAdmin && navAdmin.classList.contains('hidden')) {
                     hash = '#beranda';
                     window.location.hash = hash;
@@ -467,12 +511,19 @@
                 targetSection.classList.remove('hidden');
                 setTimeout(() => targetSection.classList.add('animate-fade-in'), 10);
             } else {
-                const beranda = document.getElementById('beranda');
-                beranda.classList.remove('hidden');
-                setTimeout(() => beranda.classList.add('animate-fade-in'), 10);
+                const beranda = getEl('beranda');
+                if (beranda) {
+                    beranda.classList.remove('hidden');
+                    setTimeout(() => beranda.classList.add('animate-fade-in'), 10);
+                }
             }
             
             window.scrollTo(0, 0);
+            
+            const mobileMenu = getEl('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
         }
 
         window.addEventListener('hashchange', handleNavigation);
@@ -534,39 +585,20 @@
             unsubscribeSettings = onSnapshot(settingsDoc, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    if(data.heroSubtitle) {
-                        document.getElementById('display-hero-subtitle').innerHTML = data.heroSubtitle;
-                        document.getElementById('setting-hero-subtitle').value = data.heroSubtitle;
-                    }
-                    if(data.heroTitle) {
-                        document.getElementById('display-hero-title').innerHTML = data.heroTitle;
-                        document.getElementById('setting-hero-title').value = data.heroTitle;
-                    }
-                    if(data.heroImage) {
-                        document.getElementById('display-hero-image').src = data.heroImage;
-                        document.getElementById('setting-hero-image').value = data.heroImage;
-                    } else {
-                        document.getElementById('setting-hero-image').value = document.getElementById('display-hero-image').src;
-                    }
-                    if(data.heroDesc) {
-                        document.getElementById('display-hero-desc').innerHTML = data.heroDesc;
-                        document.getElementById('setting-hero-desc').value = data.heroDesc;
-                    }
-                    if(data.aboutDesc) {
-                        document.getElementById('display-about-desc').innerHTML = data.aboutDesc;
-                        document.getElementById('setting-about-desc').value = data.aboutDesc;
-                    }
-                    if(data.botDesc) {
-                        document.getElementById('display-bot-desc').innerHTML = data.botDesc;
-                        document.getElementById('setting-bot-desc').value = data.botDesc;
-                    }
+                    if(data.heroSubtitle) { safeSetHTML('display-hero-subtitle', data.heroSubtitle); safeSetValue('setting-hero-subtitle', data.heroSubtitle); }
+                    if(data.heroTitle) { safeSetHTML('display-hero-title', data.heroTitle); safeSetValue('setting-hero-title', data.heroTitle); }
+                    if(data.heroImage) { safeSetSrc('display-hero-image', data.heroImage); safeSetValue('setting-hero-image', data.heroImage); }
+                    else { safeSetValue('setting-hero-image', safeGetSrc('display-hero-image')); }
+                    if(data.heroDesc) { safeSetHTML('display-hero-desc', data.heroDesc); safeSetValue('setting-hero-desc', data.heroDesc); }
+                    if(data.aboutDesc) { safeSetHTML('display-about-desc', data.aboutDesc); safeSetValue('setting-about-desc', data.aboutDesc); }
+                    if(data.botDesc) { safeSetHTML('display-bot-desc', data.botDesc); safeSetValue('setting-bot-desc', data.botDesc); }
                 } else {
-                    document.getElementById('setting-hero-subtitle').value = document.getElementById('display-hero-subtitle').innerHTML.trim();
-                    document.getElementById('setting-hero-title').value = document.getElementById('display-hero-title').innerHTML.trim();
-                    document.getElementById('setting-hero-image').value = document.getElementById('display-hero-image').src;
-                    document.getElementById('setting-hero-desc').value = document.getElementById('display-hero-desc').innerHTML.trim();
-                    document.getElementById('setting-about-desc').value = document.getElementById('display-about-desc').innerHTML.trim();
-                    document.getElementById('setting-bot-desc').value = document.getElementById('display-bot-desc').innerHTML.trim();
+                    safeSetValue('setting-hero-subtitle', safeGetHTML('display-hero-subtitle'));
+                    safeSetValue('setting-hero-title', safeGetHTML('display-hero-title'));
+                    safeSetValue('setting-hero-image', safeGetSrc('display-hero-image'));
+                    safeSetValue('setting-hero-desc', safeGetHTML('display-hero-desc'));
+                    safeSetValue('setting-about-desc', safeGetHTML('display-about-desc'));
+                    safeSetValue('setting-bot-desc', safeGetHTML('display-bot-desc'));
                 }
             }, (error) => {
                 console.error("Gagal mengambil pengaturan:", error);
@@ -593,10 +625,10 @@
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const navAdmin = document.getElementById('nav-admin');
-            const mobileNavAdmin = document.getElementById('mobile-nav-admin');
-            const navLogout = document.getElementById('nav-logout');
-            const mobileNavLogout = document.getElementById('mobile-nav-logout');
+            const navAdmin = getEl('nav-admin');
+            const mobileNavAdmin = getEl('mobile-nav-admin');
+            const navLogout = getEl('nav-logout');
+            const mobileNavLogout = getEl('mobile-nav-logout');
 
             if (user) {
                 if (!user.isAnonymous) {
@@ -616,38 +648,35 @@
         });
 
         // --- Logika Login & Logout ---
-        const loginModal = document.getElementById('login-modal');
-        const btnShowLogin = document.getElementById('btn-show-login');
-        const closeLoginBtn = document.getElementById('close-login');
-        const loginOverlay = document.getElementById('login-overlay');
-        const btnLoginSubmit = document.getElementById('btn-login-submit');
+        const loginModal = getEl('login-modal');
+        const btnLoginSubmit = getEl('btn-login-submit');
 
-        btnShowLogin?.addEventListener('click', () => {
-            loginModal.classList.remove('hidden');
-            document.getElementById('login-error').classList.add('hidden');
+        getEl('btn-show-login')?.addEventListener('click', () => {
+            if(loginModal) loginModal.classList.remove('hidden');
+            getEl('login-error')?.classList.add('hidden');
             document.body.style.overflow = 'hidden';
         });
 
         const closeLoginModal = () => {
-            loginModal.classList.add('hidden');
+            if(loginModal) loginModal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         };
 
-        closeLoginBtn?.addEventListener('click', closeLoginModal);
-        loginOverlay?.addEventListener('click', closeLoginModal);
+        getEl('close-login')?.addEventListener('click', closeLoginModal);
+        getEl('login-overlay')?.addEventListener('click', closeLoginModal);
 
         btnLoginSubmit?.addEventListener('click', async () => {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorDiv = document.getElementById('login-error');
+            const email = getEl('login-email')?.value;
+            const password = getEl('login-password')?.value;
+            const errorDiv = getEl('login-error');
             
             try {
                 btnLoginSubmit.innerText = 'Memproses...';
                 btnLoginSubmit.disabled = true;
                 await signInWithEmailAndPassword(auth, email, password);
                 closeLoginModal();
-                document.getElementById('login-email').value = '';
-                document.getElementById('login-password').value = '';
+                if(getEl('login-email')) getEl('login-email').value = '';
+                if(getEl('login-password')) getEl('login-password').value = '';
                 
                 const notif = document.createElement('div');
                 notif.className = 'fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl z-[100] transition-opacity duration-300';
@@ -656,8 +685,10 @@
                 setTimeout(() => { notif.style.opacity = '0'; setTimeout(() => notif.remove(), 300); }, 3000);
 
             } catch (error) {
-                errorDiv.innerText = 'Gagal login: Email atau password salah.';
-                errorDiv.classList.remove('hidden');
+                if(errorDiv) {
+                    errorDiv.innerText = 'Gagal login: Email atau password salah.';
+                    errorDiv.classList.remove('hidden');
+                }
             } finally {
                 btnLoginSubmit.innerText = 'Masuk';
                 btnLoginSubmit.disabled = false;
@@ -680,8 +711,8 @@
             }
         };
 
-        document.getElementById('nav-logout')?.addEventListener('click', handleLogout);
-        document.getElementById('mobile-nav-logout')?.addEventListener('click', handleLogout);
+        getEl('nav-logout')?.addEventListener('click', handleLogout);
+        getEl('mobile-nav-logout')?.addEventListener('click', handleLogout);
 
         // --- Fetch & Render Artikel ---
         function loadArticlesFromFirestore() {
@@ -705,9 +736,10 @@
             });
         }
 
-        const articleGrid = document.getElementById('article-grid');
-        
         function renderArticles() {
+            const articleGrid = getEl('article-grid');
+            if (!articleGrid) return;
+
             if (articles.length === 0) {
                 articleGrid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full text-center py-10 text-lg">Belum ada artikel yang dipublikasikan.</p>';
                 return;
@@ -739,8 +771,8 @@
         }
 
         // --- Logika Halaman Baca Artikel & Summarizer AI ---
-        const btnSummarize = document.getElementById('btn-summarize');
-        const summaryContainer = document.getElementById('summary-container');
+        const btnSummarize = getEl('btn-summarize');
+        const summaryContainer = getEl('summary-container');
         let currentArticleContent = "";
 
         window.openArticle = (id) => {
@@ -749,44 +781,55 @@
 
             currentArticleContent = article.content.replace(/<[^>]*>?/gm, ''); 
 
-            summaryContainer.classList.add('hidden');
-            summaryContainer.innerHTML = '';
-            btnSummarize.disabled = false;
-            btnSummarize.innerHTML = '<span>✨</span> Ringkas dengan AI';
+            if(summaryContainer) {
+                summaryContainer.classList.add('hidden');
+                summaryContainer.innerHTML = '';
+            }
+            if(btnSummarize) {
+                btnSummarize.disabled = false;
+                btnSummarize.innerHTML = '<span>✨</span> Ringkas dengan AI';
+            }
 
-            document.getElementById('baca-title').innerText = article.title;
-            document.getElementById('baca-date').innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${article.date}`;
-            document.getElementById('baca-category').innerText = article.category;
-            document.getElementById('baca-body').innerHTML = article.content;
+            safeSetHTML('baca-title', article.title);
+            safeSetHTML('baca-date', `<i class="far fa-calendar-alt mr-2"></i>${article.date}`);
+            safeSetHTML('baca-category', article.category);
+            safeSetHTML('baca-body', article.content);
             
-            const bacaImg = document.getElementById('baca-img');
-            if(article.image) {
-                bacaImg.src = article.image;
-                bacaImg.classList.remove('hidden');
-            } else {
-                bacaImg.classList.add('hidden');
+            const bacaImg = getEl('baca-img');
+            if(bacaImg) {
+                if(article.image) {
+                    bacaImg.src = article.image;
+                    bacaImg.classList.remove('hidden');
+                } else {
+                    bacaImg.classList.add('hidden');
+                }
             }
 
             window.location.hash = '#baca-artikel';
         };
 
-        btnSummarize.addEventListener('click', async () => {
+        btnSummarize?.addEventListener('click', async () => {
             btnSummarize.disabled = true;
             btnSummarize.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sedang Meringkas...';
-            summaryContainer.classList.remove('hidden');
-            summaryContainer.innerHTML = '<span class="text-primary opacity-80">AI sedang membaca artikel ini...</span>';
+            if(summaryContainer) {
+                summaryContainer.classList.remove('hidden');
+                summaryContainer.innerHTML = '<span class="text-primary opacity-80">AI sedang membaca artikel ini...</span>';
+            }
 
             const prompt = `Buatkan ringkasan dari artikel blog berikut ke dalam Bahasa Indonesia yang kasual, padat, dan jelas (maksimal 3 kalimat).\n\n${currentArticleContent}`;
             const summary = await callGeminiAPI(prompt);
             const formattedSummary = summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
-            summaryContainer.innerHTML = `<strong>✨ Ringkasan Cepat:</strong><br><p class="mt-1">${formattedSummary}</p>`;
+            if(summaryContainer) {
+                summaryContainer.innerHTML = `<strong>✨ Ringkasan Cepat:</strong><br><p class="mt-1">${formattedSummary}</p>`;
+            }
             btnSummarize.innerHTML = '<span>✨</span> Ringkas Ulang';
             btnSummarize.disabled = false;
         });
 
         // --- Fitur Bantuan Toolbar Editor ---
         function insertTextAtCursor(element, text) {
+            if (!element) return;
             if (element.selectionStart || element.selectionStart === '0') {
                 const startPos = element.selectionStart;
                 const endPos = element.selectionEnd;
@@ -799,105 +842,103 @@
             element.focus();
         }
 
-        document.getElementById('btn-format-img')?.addEventListener('click', () => {
+        getEl('btn-format-img')?.addEventListener('click', () => {
             const url = prompt('Masukkan URL/Link Gambar Ilustrasi:');
             if (url) {
                 const imgTag = `\n<figure><img src="${url}" alt="Ilustrasi" class="w-full rounded-2xl shadow-md my-6"></figure>\n`;
-                insertTextAtCursor(document.getElementById('form-content'), imgTag);
+                insertTextAtCursor(getEl('form-content'), imgTag);
             }
         });
 
-        document.getElementById('btn-format-link')?.addEventListener('click', () => {
+        getEl('btn-format-link')?.addEventListener('click', () => {
             const url = prompt('Masukkan URL/Link Tujuan:');
             if (url) {
-                insertTextAtCursor(document.getElementById('form-content'), `<a href="${url}" target="_blank" class="text-primary hover:underline">Teks Link Anda</a>`);
+                insertTextAtCursor(getEl('form-content'), `<a href="${url}" target="_blank" class="text-primary hover:underline">Teks Link Anda</a>`);
             }
         });
 
-        document.getElementById('btn-format-bold')?.addEventListener('click', () => {
-            insertTextAtCursor(document.getElementById('form-content'), `<strong>Teks Tebal</strong>`);
+        getEl('btn-format-bold')?.addEventListener('click', () => {
+            insertTextAtCursor(getEl('form-content'), `<strong>Teks Tebal</strong>`);
         });
 
-        document.getElementById('btn-format-italic')?.addEventListener('click', () => {
-            insertTextAtCursor(document.getElementById('form-content'), `<em>Teks Miring</em>`);
+        getEl('btn-format-italic')?.addEventListener('click', () => {
+            insertTextAtCursor(getEl('form-content'), `<em>Teks Miring</em>`);
         });
 
-        // --- Logika Admin Panel (CRUD Artikel) ---
-        const adminBody = document.getElementById('admin-body');
-        const adminFormContainer = document.getElementById('admin-form-container');
-        const adminArticlesList = document.getElementById('admin-articles-list');
-        const btnNewArticle = document.getElementById('btn-new-article');
-        const btnCancelEdit = document.getElementById('btn-cancel-edit');
-        const btnSaveArticle = document.getElementById('btn-save-article');
+        // --- Logika Admin Panel (CRUD Artikel & Tab Menus) ---
+        const adminTabs = [
+            { btn: getEl('tab-articles-btn'), container: getEl('admin-body') },
+            { btn: getEl('tab-profile-btn'), container: getEl('admin-profile-container') },
+            { btn: getEl('tab-home-btn'), container: getEl('admin-home-container') },
+            { btn: getEl('tab-other-btn'), container: getEl('admin-other-container') }
+        ];
 
+        const adminFormContainer = getEl('admin-form-container');
         let editingArticleId = null;
-
-        // Element Tab Admin
-        const tabArticlesBtn = document.getElementById('tab-articles-btn');
-        const tabSettingsBtn = document.getElementById('tab-settings-btn');
-        const adminSettingsContainer = document.getElementById('admin-settings-container');
 
         const activeTabClass = "px-4 py-2 font-semibold text-primary border-b-2 border-primary focus:outline-none whitespace-nowrap transition-colors duration-300";
         const inactiveTabClass = "px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-200 transition focus:outline-none whitespace-nowrap duration-300";
 
-        const switchToArticlesTab = () => {
-            tabArticlesBtn.className = activeTabClass;
-            tabSettingsBtn.className = inactiveTabClass;
-            adminBody.classList.remove('hidden');
-            adminSettingsContainer.classList.add('hidden');
-            adminFormContainer.classList.add('hidden');
-        };
+        function switchAdminTab(targetBtnId) {
+            adminTabs.forEach(tab => {
+                if (tab.btn?.id === targetBtnId) {
+                    if (tab.btn) tab.btn.className = activeTabClass;
+                    if (tab.container) tab.container.classList.remove('hidden');
+                } else {
+                    if (tab.btn) tab.btn.className = inactiveTabClass;
+                    if (tab.container) tab.container.classList.add('hidden');
+                }
+            });
+            if (adminFormContainer) adminFormContainer.classList.add('hidden');
+        }
 
-        const switchToSettingsTab = () => {
-            tabSettingsBtn.className = activeTabClass;
-            tabArticlesBtn.className = inactiveTabClass;
-            adminBody.classList.add('hidden');
-            adminSettingsContainer.classList.remove('hidden');
-            adminFormContainer.classList.add('hidden');
-        };
+        adminTabs.forEach(tab => {
+            tab.btn?.addEventListener('click', () => switchAdminTab(tab.btn.id));
+        });
 
-        tabArticlesBtn?.addEventListener('click', switchToArticlesTab);
-        tabSettingsBtn?.addEventListener('click', switchToSettingsTab);
-
-        // --- Simpan Pengaturan Teks ---
-        document.getElementById('btn-save-settings')?.addEventListener('click', async () => {
-            const btn = document.getElementById('btn-save-settings');
-            const heroSubtitle = document.getElementById('setting-hero-subtitle').value;
-            const heroTitle = document.getElementById('setting-hero-title').value;
-            const heroImage = document.getElementById('setting-hero-image').value;
-            const heroDesc = document.getElementById('setting-hero-desc').value;
-            const aboutDesc = document.getElementById('setting-about-desc').value;
-            const botDesc = document.getElementById('setting-bot-desc').value;
+        // --- Simpan Semua Pengaturan Teks & Profil ---
+        const saveAllSettingsHandler = async (e) => {
+            const btn = e.target;
+            const originalText = btn.innerText;
+            
+            const heroSubtitle = safeGetValue('setting-hero-subtitle');
+            const heroTitle = safeGetValue('setting-hero-title');
+            const heroImage = safeGetValue('setting-hero-image');
+            const heroDesc = safeGetValue('setting-hero-desc');
+            const aboutDesc = safeGetValue('setting-about-desc');
+            const botDesc = safeGetValue('setting-bot-desc');
 
             try {
                 btn.disabled = true;
                 btn.innerText = 'Menyimpan...';
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'site_settings', 'main'), {
-                    heroSubtitle,
-                    heroTitle,
-                    heroImage,
-                    heroDesc,
-                    aboutDesc,
-                    botDesc,
+                    heroSubtitle, heroTitle, heroImage, heroDesc, aboutDesc, botDesc,
                     updatedAt: Date.now()
                 }, { merge: true });
                 
                 btn.innerText = 'Berhasil Disimpan!';
                 setTimeout(() => {
-                    btn.innerText = 'Simpan Pengaturan';
+                    btn.innerText = originalText;
                     btn.disabled = false;
                 }, 2000);
-            } catch(e) {
-                console.error('Error saving settings:', e);
+            } catch(error) {
+                console.error('Error saving settings:', error);
                 btn.innerText = 'Gagal Simpan';
                 setTimeout(() => {
-                    btn.innerText = 'Simpan Pengaturan';
+                    btn.innerText = originalText;
                     btn.disabled = false;
                 }, 2000);
             }
+        };
+
+        document.querySelectorAll('.btn-save-settings').forEach(btn => {
+            btn.addEventListener('click', saveAllSettingsHandler);
         });
 
         function renderAdminArticles() {
+            const adminArticlesList = getEl('admin-articles-list');
+            if (!adminArticlesList) return;
+
             if (articles.length === 0) {
                 adminArticlesList.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm italic">Belum ada artikel. Klik "Tulis Baru" untuk memulai.</p>';
                 return;
@@ -926,15 +967,15 @@
             if(!article) return;
             
             editingArticleId = id;
-            document.getElementById('form-title-label').innerText = 'Edit Artikel';
-            document.getElementById('form-title').value = article.title || '';
-            document.getElementById('form-category').value = article.category || '';
-            document.getElementById('form-image').value = article.image || '';
-            document.getElementById('form-excerpt').value = article.excerpt || '';
-            document.getElementById('form-content').value = article.content || '';
+            safeSetHTML('form-title-label', 'Edit Artikel');
+            safeSetValue('form-title', article.title || '');
+            safeSetValue('form-category', article.category || '');
+            safeSetValue('form-image', article.image || '');
+            safeSetValue('form-excerpt', article.excerpt || '');
+            safeSetValue('form-content', article.content || '');
             
-            adminBody.classList.add('hidden');
-            adminFormContainer.classList.remove('hidden');
+            getEl('admin-body')?.classList.add('hidden');
+            getEl('admin-form-container')?.classList.remove('hidden');
         };
 
         window.requestDelete = async (id, btn) => {
@@ -960,38 +1001,41 @@
             }
         };
 
-        btnNewArticle.addEventListener('click', () => {
+        getEl('btn-new-article')?.addEventListener('click', () => {
             editingArticleId = null;
-            document.getElementById('form-title-label').innerText = 'Tulis Artikel Baru';
-            document.getElementById('form-title').value = '';
-            document.getElementById('form-category').value = '';
-            document.getElementById('form-image').value = '';
-            document.getElementById('form-excerpt').value = '';
-            document.getElementById('form-content').value = '';
+            safeSetHTML('form-title-label', 'Tulis Artikel Baru');
+            safeSetValue('form-title', '');
+            safeSetValue('form-category', '');
+            safeSetValue('form-image', '');
+            safeSetValue('form-excerpt', '');
+            safeSetValue('form-content', '');
             
-            adminBody.classList.add('hidden');
-            adminFormContainer.classList.remove('hidden');
+            getEl('admin-body')?.classList.add('hidden');
+            getEl('admin-form-container')?.classList.remove('hidden');
         });
 
-        btnCancelEdit.addEventListener('click', () => {
-            adminBody.classList.remove('hidden');
-            adminFormContainer.classList.add('hidden');
+        getEl('btn-cancel-edit')?.addEventListener('click', () => {
+            getEl('admin-body')?.classList.remove('hidden');
+            getEl('admin-form-container')?.classList.add('hidden');
         });
 
-        btnSaveArticle.addEventListener('click', async () => {
-            const title = document.getElementById('form-title').value.trim();
-            const category = document.getElementById('form-category').value.trim();
-            const image = document.getElementById('form-image').value.trim();
-            const excerpt = document.getElementById('form-excerpt').value.trim();
-            const content = document.getElementById('form-content').value.trim();
-            const errorMsg = document.getElementById('form-error');
+        getEl('btn-save-article')?.addEventListener('click', async () => {
+            const btnSaveArticle = getEl('btn-save-article');
+            const title = safeGetValue('form-title');
+            const category = safeGetValue('form-category');
+            const image = safeGetValue('form-image');
+            const excerpt = safeGetValue('form-excerpt');
+            const content = safeGetValue('form-content');
+            const errorMsg = getEl('form-error');
 
             if(!title || !content) {
-                errorMsg.innerText = 'Judul dan Konten artikel wajib diisi.';
-                errorMsg.classList.remove('hidden');
+                if (errorMsg) {
+                    errorMsg.innerText = 'Judul dan Konten artikel wajib diisi.';
+                    errorMsg.classList.remove('hidden');
+                }
                 return;
             }
-            errorMsg.classList.add('hidden');
+            if (errorMsg) errorMsg.classList.add('hidden');
 
             const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             
@@ -1006,8 +1050,10 @@
             };
 
             try {
-                btnSaveArticle.disabled = true;
-                btnSaveArticle.innerText = 'Menyimpan...';
+                if (btnSaveArticle) {
+                    btnSaveArticle.disabled = true;
+                    btnSaveArticle.innerText = 'Menyimpan...';
+                }
 
                 if (editingArticleId) {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'articles', editingArticleId), articleData);
@@ -1016,36 +1062,31 @@
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'articles'), articleData);
                 }
                 
-                adminBody.classList.remove('hidden');
-                adminFormContainer.classList.add('hidden');
+                getEl('admin-body')?.classList.remove('hidden');
+                getEl('admin-form-container')?.classList.add('hidden');
             } catch (e) {
                 console.error("Gagal simpan:", e);
-                errorMsg.innerText = 'Terjadi kesalahan saat menyimpan data.';
-                errorMsg.classList.remove('hidden');
+                if (errorMsg) {
+                    errorMsg.innerText = 'Terjadi kesalahan saat menyimpan data.';
+                    errorMsg.classList.remove('hidden');
+                }
             } finally {
-                btnSaveArticle.disabled = false;
-                btnSaveArticle.innerText = 'Simpan Artikel';
+                if (btnSaveArticle) {
+                    btnSaveArticle.disabled = false;
+                    btnSaveArticle.innerText = 'Simpan Artikel';
+                }
             }
         });
 
         // --- Menu Mobile Navigasi ---
-        const btnMobileMenu = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        btnMobileMenu.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        const mobileLinks = mobileMenu.querySelectorAll('a, button');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
+        getEl('mobile-menu-btn')?.addEventListener('click', () => {
+            getEl('mobile-menu')?.classList.toggle('hidden');
         });
 
         // --- Inisialisasi DOM ---
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('year').textContent = new Date().getFullYear();
+            const yearEl = getEl('year');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
         });
 
     </script>
